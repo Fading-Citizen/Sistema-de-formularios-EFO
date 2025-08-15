@@ -302,6 +302,7 @@
   
   .login-card {
     border-radius: 12px;
+    max-width: 95vw;
   }
   
   .login-header {
@@ -315,4 +316,72 @@
   .login-footer {
     padding: 16px 20px;
   }
+  
+  .demo-users {
+    padding: 16px 20px;
+  }
+  
+  .user-demo-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* Demo Users Section */
+.demo-users {
+  background: #f8f9fa;
+  border-top: 1px solid #e9ecef;
+  padding: 20px 30px;
+}
+
+.demo-users h3 {
+  margin: 0 0 16px 0;
+  font-size: 16px;
+  font-weight: 600;
+  color: var(--efo-primary);
+  text-align: center;
+}
+
+.user-demo-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+}
+
+.user-demo-item {
+  background: white;
+  padding: 12px;
+  border-radius: 8px;
+  border: 1px solid #e9ecef;
+  transition: all 0.2s ease;
+}
+
+.user-demo-item:hover {
+  border-color: var(--efo-accent);
+  box-shadow: 0 2px 8px rgba(0, 96, 104, 0.1);
+}
+
+.user-demo-item strong {
+  display: block;
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--efo-primary);
+  margin-bottom: 4px;
+}
+
+.user-demo-item code {
+  display: block;
+  font-size: 11px;
+  background: var(--efo-light);
+  color: var(--efo-dark);
+  padding: 4px 6px;
+  border-radius: 4px;
+  margin-bottom: 4px;
+  font-family: 'Courier New', monospace;
+}
+
+.user-demo-item span {
+  display: block;
+  font-size: 10px;
+  color: var(--efo-secondary);
+  font-style: italic;
 }

@@ -108,6 +108,33 @@ const Login = () => {
           </button>
         </form>
 
+        {/* Información de usuarios de prueba */}
+        <div className="demo-users">
+          <h3>Usuarios de Prueba</h3>
+          <div className="user-demo-grid">
+            <div className="user-demo-item">
+              <strong>Super Admin</strong>
+              <code>superadmin / efo2025super</code>
+              <span>Acceso completo</span>
+            </div>
+            <div className="user-demo-item">
+              <strong>Admin Crédito</strong>
+              <code>creditadmin / efo2025credit</code>
+              <span>Solo formularios de crédito</span>
+            </div>
+            <div className="user-demo-item">
+              <strong>Admin General</strong>
+              <code>generaladmin / efo2025general</code>
+              <span>Formularios generales</span>
+            </div>
+            <div className="user-demo-item">
+              <strong>Solo Lectura</strong>
+              <code>viewer / efo2025view</code>
+              <span>Solo visualización</span>
+            </div>
+          </div>
+        </div>
+
         <div className="login-footer">
           <a 
             href="https://electrolfibraoptica.com" 

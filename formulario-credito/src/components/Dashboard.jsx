@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useAuth } from '../contexts/AuthContext';
+import { useNavigate } from 'react-router-dom';
 import logoEFO from '../assets/images/Logoefo.png';
 import { 
   LayoutDashboard, 
@@ -19,12 +20,27 @@ import {
   Home,
   Paperclip,
   ExternalLink,
-  FileIcon
+  FileIcon,
+  Shield,
+  Settings,
+  Crown
 } from 'lucide-react';
 import './Dashboard.css';
 
 const Dashboard = () => {
-  const { user, logout } = useAuth();
+  const navigate = useNavigate();
+  const { 
+    user, 
+    logout, 
+    canEdit, 
+    canDelete, 
+    canArchive, 
+    canExport,
+    canAccessForm,
+    canManageUsers,
+    getUserRoleLabel,
+    FORM_TYPES 
+  } = useAuth();
   const [submissions, setSubmissions] = useState([]);
   const [loading, setLoading] = useState(true);
   const [stats, setStats] = useState({
@@ -88,7 +104,7 @@ const Dashboard = () => {
   };
 
   const useMockData = () => {
-    const mockSubmissions = [
+    const allMockSubmissions = [
       {
         id: 1,
         // Campos básicos para mostrar en tabla
@@ -98,6 +114,7 @@ const Dashboard = () => {
         fecha: '2025-01-15',
         estado: 'Nuevo',
         tipoFormulario: 'Crédito',
+        formType: FORM_TYPES.CREDIT,
         // Campos del formulario real
         producto_tipo: 'Crédito Empresarial',
         tercero_tipo: 'persona_juridica',
@@ -158,6 +175,7 @@ const Dashboard = () => {
         fecha: '2025-01-14',
         estado: 'Pendiente',
         tipoFormulario: 'Crédito',
+        formType: FORM_TYPES.CREDIT,
         producto_tipo: 'Crédito Personal',
         tercero_tipo: 'persona_natural',
         identificacion_tipo: 'CC',
@@ -208,6 +226,7 @@ const Dashboard = () => {
         fecha: '2025-01-13',
         estado: 'En proceso',
         tipoFormulario: 'Crédito',
+        formType: FORM_TYPES.CREDIT,
         producto_tipo: 'Crédito de Capital de Trabajo',
         tercero_tipo: 'persona_juridica',
         identificacion_tipo: 'NIT',
@@ -266,6 +285,7 @@ const Dashboard = () => {
         fecha: '2025-01-12',
         estado: 'Completado',
         tipoFormulario: 'Crédito',
+        formType: FORM_TYPES.CREDIT,
         producto_tipo: 'Crédito Vehículo',
         tercero_tipo: 'persona_natural',
         identificacion_tipo: 'CC',
@@ -310,16 +330,49 @@ const Dashboard = () => {
           { nombre: 'certificado_ingresos.pdf', url: '#', tipo: 'application/pdf' },
           { nombre: 'referencias_personales.pdf', url: '#', tipo: 'application/pdf' }
         ]
+      },
+      {
+        id: 5,
+        nombre: 'Contacto General - Empresa XYZ',
+        email: 'info@empresa-xyz.com',
+        telefono: '3201234567',
+        fecha: '2025-01-16',
+        estado: 'Pendiente',
+        tipoFormulario: 'General',
+        formType: FORM_TYPES.GENERAL,
+        razon_social: 'Empresa XYZ S.A.S.',
+        sector: 'Comercio',
+        mensaje: 'Consulta sobre servicios de fibra óptica para nuestra sede principal',
+        documentos: []
+      },
+      {
+        id: 6,
+        nombre: 'Solicitud de Contacto - Ana Martínez',
+        email: 'ana.martinez@email.com',
+        telefono: '3187654321',
+        fecha: '2025-01-17',
+        estado: 'Nuevo',
+        tipoFormulario: 'Contacto',
+        formType: FORM_TYPES.CONTACT,
+        razon_social: 'Ana Martínez',
+        sector: 'Personal',
+        mensaje: 'Información sobre planes residenciales de internet',
+        documentos: []
       }
     ];
 
+    // Filtrar formularios según permisos del usuario
+    const allowedSubmissions = allMockSubmissions.filter(submission => 
+      canAccessForm(submission.formType)
+    );
+
     setTimeout(() => {
-      setSubmissions(mockSubmissions);
+      setSubmissions(allowedSubmissions);
       setStats({
-        total: mockSubmissions.length,
-        thisMonth: mockSubmissions.length,
-        pending: mockSubmissions.filter(s => s.estado === 'Pendiente').length,
-        completed: mockSubmissions.filter(s => s.estado === 'Completado').length
+        total: allowedSubmissions.length,
+        thisMonth: allowedSubmissions.length,
+        pending: allowedSubmissions.filter(s => s.estado === 'Pendiente').length,
+        completed: allowedSubmissions.filter(s => s.estado === 'Completado').length
       });
       setLoading(false);
     }, 1000);
@@ -689,10 +742,38 @@ En un entorno de producción, aquí se descargarían los archivos reales.`;
               </svg>
               Sitio Web
             </button>
-            <div className="user-info">
-              <User size={20} />
-              <span>Bienvenido, {user.username}</span>
+            
+            {canManageUsers() && (
+              <button className="users-btn">
+                <Settings size={16} />
+                Gestión de Usuarios
+              </button>
+            )}
+            
+            {user.role === 'super_admin' && (
+              <button 
+                className="super-admin-btn"
+                onClick={() => navigate('/super-admin')}
+              >
+                <Crown size={16} />
+                Super Admin Panel
+              </button>
+            )}
+            
+            <div className="user-info-extended">
+              <div className="user-avatar">
+                <User size={20} />
+              </div>
+              <div className="user-details">
+                <span className="user-name">{user.name}</span>
+                <span className="user-role">
+                  <Shield size={14} />
+                  {getUserRoleLabel(user.role)}
+                </span>
+                <span className="user-department">{user.department}</span>
+              </div>
             </div>
+            
             <button onClick={handleLogout} className="logout-btn">
               <LogOut size={18} />
               Cerrar Sesión
@@ -738,10 +819,16 @@ En un entorno de producción, aquí se descargarían los archivos reales.`;
                 value={filterType}
                 onChange={(e) => setFilterType(e.target.value)}
               >
-                <option value="all">Todos los formularios</option>
-                <option value="credito">Formularios de Crédito</option>
-                <option value="contacto">Formularios de Contacto</option>
-                <option value="soporte">Formularios de Soporte</option>
+                <option value="all">Todos los formularios permitidos</option>
+                {canAccessForm(FORM_TYPES.CREDIT) && (
+                  <option value="credito">Formularios de Crédito</option>
+                )}
+                {canAccessForm(FORM_TYPES.GENERAL) && (
+                  <option value="general">Formularios Generales</option>
+                )}
+                {canAccessForm(FORM_TYPES.CONTACT) && (
+                  <option value="contacto">Formularios de Contacto</option>
+                )}
               </select>
             </div>
           </div>
@@ -804,45 +891,58 @@ En un entorno de producción, aquí se descargarían los archivos reales.`;
                         >
                           Ver
                         </button>
-                        <button 
-                          className="download-btn" 
-                          onClick={() => generateFormPDF(submission)}
-                          title="Generar PDF de la solicitud"
-                          style={{backgroundColor: '#10b981', borderColor: '#059669'}}
-                        >
-                          <FileText size={14} />
-                        </button>
-                        <button 
-                          className="download-btn" 
-                          onClick={() => downloadAllDocuments(submission.id)}
-                          title="Descargar todos los documentos"
-                        >
-                          <Download size={14} />
-                        </button>
-                        {currentView === 'active' ? (
+                        
+                        {canExport() && (
                           <button 
-                            onClick={() => archiveSubmission(submission.id)}
-                            className="archive-btn"
-                            title="Archivar"
+                            className="download-btn" 
+                            onClick={() => generateFormPDF(submission)}
+                            title="Generar PDF de la solicitud"
+                            style={{backgroundColor: '#10b981', borderColor: '#059669'}}
                           >
-                            <Archive size={14} />
+                            <FileText size={14} />
                           </button>
+                        )}
+                        
+                        {canExport() && (
+                          <button 
+                            className="download-btn" 
+                            onClick={() => downloadAllDocuments(submission.id)}
+                            title="Descargar todos los documentos"
+                          >
+                            <Download size={14} />
+                          </button>
+                        )}
+                        
+                        {currentView === 'active' ? (
+                          canArchive() && (
+                            <button 
+                              onClick={() => archiveSubmission(submission.id)}
+                              className="archive-btn"
+                              title="Archivar"
+                            >
+                              <Archive size={14} />
+                            </button>
+                          )
                         ) : (
                           <div className="archived-actions">
-                            <button 
-                              onClick={() => restoreSubmission(submission.id)}
-                              className="restore-btn"
-                              title="Restaurar"
-                            >
-                              <ArchiveRestore size={14} />
-                            </button>
-                            <button 
-                              onClick={() => deleteSubmission(submission.id)}
-                              className="delete-btn"
-                              title="Eliminar permanentemente"
-                            >
-                              <Trash2 size={14} />
-                            </button>
+                            {canEdit() && (
+                              <button 
+                                onClick={() => restoreSubmission(submission.id)}
+                                className="restore-btn"
+                                title="Restaurar"
+                              >
+                                <ArchiveRestore size={14} />
+                              </button>
+                            )}
+                            {canDelete() && (
+                              <button 
+                                onClick={() => deleteSubmission(submission.id)}
+                                className="delete-btn"
+                                title="Eliminar permanentemente"
+                              >
+                                <Trash2 size={14} />
+                              </button>
+                            )}
                           </div>
                         )}
                       </div>
@@ -1014,21 +1114,23 @@ En un entorno de producción, aquí se descargarían los archivos reales.`;
                     </span>
                   </div>
                   
-                  {/* Selector para cambiar estado */}
-                  <div className="detail-item">
-                    <label>Cambiar Estado:</label>
-                    <select 
-                      value={newStatus} 
-                      onChange={(e) => setNewStatus(e.target.value)}
-                      className="status-select"
-                    >
-                      <option value="">Seleccionar nuevo estado</option>
-                      <option value="Nuevo">Nuevo</option>
-                      <option value="Pendiente">Pendiente</option>
-                      <option value="En proceso">En proceso</option>
-                      <option value="Completado">Completado</option>
-                    </select>
-                  </div>
+                  {/* Selector para cambiar estado - Solo si tiene permisos */}
+                  {canEdit() && (
+                    <div className="detail-item">
+                      <label>Cambiar Estado:</label>
+                      <select 
+                        value={newStatus} 
+                        onChange={(e) => setNewStatus(e.target.value)}
+                        className="status-select"
+                      >
+                        <option value="">Seleccionar nuevo estado</option>
+                        <option value="Nuevo">Nuevo</option>
+                        <option value="Pendiente">Pendiente</option>
+                        <option value="En proceso">En proceso</option>
+                        <option value="Completado">Completado</option>
+                      </select>
+                    </div>
+                  )}
 
                   {/* Documentos Adjuntos */}
                   {selectedSubmission.documentos && selectedSubmission.documentos.length > 0 && (
@@ -1041,13 +1143,15 @@ En un entorno de producción, aquí se descargarían los archivos reales.`;
                               <Paperclip size={16} />
                               <span className="document-name">{doc.nombre}</span>
                             </div>
-                            <button 
-                              className="download-document-btn"
-                              onClick={() => downloadDocument(doc)}
-                              title={`Descargar ${doc.nombre}`}
-                            >
-                              <Download size={14} />
-                            </button>
+                            {canExport() && (
+                              <button 
+                                className="download-document-btn"
+                                onClick={() => downloadDocument(doc)}
+                                title={`Descargar ${doc.nombre}`}
+                              >
+                                <Download size={14} />
+                              </button>
+                            )}
                           </div>
                         ))}
                       </div>
@@ -1059,13 +1163,15 @@ En un entorno de producción, aquí se descargarían los archivos reales.`;
                 <button className="btn-secondary" onClick={() => setSelectedSubmission(null)}>
                   Cerrar
                 </button>
-                <button 
-                  className="btn-primary"
-                  onClick={() => updateSubmissionStatus(selectedSubmission.id)}
-                  disabled={isUpdatingStatus}
-                >
-                  {isUpdatingStatus ? 'Actualizando...' : 'Actualizar Estado'}
-                </button>
+                {canEdit() && (
+                  <button 
+                    className="btn-primary"
+                    onClick={() => updateSubmissionStatus(selectedSubmission.id)}
+                    disabled={isUpdatingStatus || !newStatus}
+                  >
+                    {isUpdatingStatus ? 'Actualizando...' : 'Actualizar Estado'}
+                  </button>
+                )}
               </div>
             </div>
           </div>

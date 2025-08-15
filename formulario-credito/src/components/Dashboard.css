@@ -99,6 +99,100 @@
   border-radius: 8px;
 }
 
+.user-info-extended {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  background: var(--efo-light);
+  padding: 12px 16px;
+  border-radius: 12px;
+  border: 2px solid var(--efo-accent);
+  min-width: 220px;
+}
+
+.user-avatar {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 40px;
+  height: 40px;
+  background: var(--efo-primary);
+  color: white;
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+
+.user-details {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  flex: 1;
+}
+
+.user-name {
+  font-weight: 600;
+  color: var(--efo-primary);
+  font-size: 14px;
+}
+
+.user-role {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 12px;
+  color: var(--efo-secondary);
+  font-weight: 500;
+}
+
+.user-department {
+  font-size: 11px;
+  color: var(--efo-secondary);
+  opacity: 0.8;
+}
+
+.users-btn {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background: var(--efo-secondary);
+  color: white;
+  border: none;
+  padding: 8px 12px;
+  border-radius: 8px;
+  cursor: pointer;
+  font-weight: 500;
+  transition: all 0.3s ease;
+  font-size: 14px;
+}
+
+.users-btn:hover {
+  background: #3f4751;
+  transform: translateY(-1px);
+  box-shadow: 0 4px 8px rgba(84, 89, 95, 0.4);
+}
+
+.super-admin-btn {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background: linear-gradient(135deg, #f6ad55, #ed8936);
+  color: white;
+  border: none;
+  padding: 8px 12px;
+  border-radius: 8px;
+  cursor: pointer;
+  font-weight: 600;
+  transition: all 0.3s ease;
+  font-size: 14px;
+  box-shadow: 0 2px 8px rgba(246, 173, 85, 0.3);
+}
+
+.super-admin-btn:hover {
+  background: linear-gradient(135deg, #ed8936, #dd6b20);
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(246, 173, 85, 0.4);
+}
+
 .logout-btn {
   display: flex;
   align-items: center;
@@ -756,6 +850,22 @@
     flex-direction: column;
     gap: 16px;
     align-items: flex-start;
+  }
+  
+  .header-actions {
+    flex-direction: column;
+    gap: 12px;
+    width: 100%;
+  }
+  
+  .user-info-extended {
+    width: 100%;
+    min-width: auto;
+  }
+  
+  .users-btn {
+    width: 100%;
+    justify-content: center;
   }
 
   .section-header {
