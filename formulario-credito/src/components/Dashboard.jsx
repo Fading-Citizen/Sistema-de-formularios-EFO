@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useAuth } from '../contexts/AuthContext';
 import { useNavigate } from 'react-router-dom';
+import { API_ENDPOINTS } from '../config/api';
 import logoEFO from '../assets/images/Logoefo.png';
 import { 
   LayoutDashboard, 
@@ -61,7 +62,8 @@ const Dashboard = () => {
   const fetchSubmissions = async () => {
     setLoading(true);
     try {
-      const response = await fetch(`${window.location.origin}/wp-admin/admin-ajax.php?action=get_form_submissions&limit=50&form_type=${filterType !== 'all' ? filterType : ''}`);
+      const url = `${API_ENDPOINTS.GET_SUBMISSIONS}&limit=50&form_type=${filterType !== 'all' ? filterType : ''}`;
+      const response = await fetch(url);
       
       if (response.ok) {
         const result = await response.json();
@@ -84,7 +86,7 @@ const Dashboard = () => {
           setSubmissions(realSubmissions);
           setStats({
             total: result.data.total,
-            thisMonth: realSubmissions.length, // Simplificado para MVP
+            thisMonth: realSubmissions.length,
             pending: realSubmissions.filter(s => s.estado === 'Nuevo' || s.estado === 'Pendiente').length,
             completed: realSubmissions.filter(s => s.estado === 'Completado').length
           });
@@ -92,7 +94,7 @@ const Dashboard = () => {
         }
       }
       
-      // Fallback a datos mock si no hay backend
+      // Fallback a datos mock si no hay backend disponible
       useMockData();
       
     } catch (error) {

@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { ArrowLeft, Home } from 'lucide-react';
+import { API_ENDPOINTS } from '../config/api';
 import logoEFO from '../assets/images/Logoefo.png';
 import './FormularioCredito.css';
 
@@ -149,9 +150,6 @@ const FormularioCredito = () => {
     try {
       const formDataToSend = new FormData();
       
-      // Agregar action para WordPress AJAX
-      formDataToSend.append('action', 'submit_credito_form');
-      
       // Agregar datos del formulario
       Object.keys(formData).forEach(key => {
         formDataToSend.append(key, formData[key]);
@@ -164,17 +162,9 @@ const FormularioCredito = () => {
         }
       });
 
-      // Obtener la URL de WordPress AJAX
-      const ajaxUrl = window.wpApiSettings?.root ? 
-        `${window.wpApiSettings.root}wp/v2/` : 
-        `${window.location.origin}/wp-admin/admin-ajax.php`;
-
-      const response = await fetch(ajaxUrl, {
+      const response = await fetch(API_ENDPOINTS.SUBMIT_FORM, {
         method: 'POST',
-        body: formDataToSend,
-        headers: {
-          'X-Requested-With': 'XMLHttpRequest'
-        }
+        body: formDataToSend
       });
 
       const result = await response.json();
