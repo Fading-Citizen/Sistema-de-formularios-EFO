@@ -1,0 +1,682 @@
+/* Cotizador de Patch Cords - Estilo E-commerce Moderno */
+
+.cotizador-patch-cords {
+  min-height: 100vh;
+  background: linear-gradient(135deg, var(--efo-background) 0%, var(--efo-accent) 100%);
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+/* Header Section */
+.cotizador-header {
+  background: linear-gradient(135deg, var(--efo-primary) 0%, var(--efo-primary-dark) 100%);
+  color: white;
+  padding: 2rem 1rem;
+  box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+}
+
+.logo-section {
+  max-width: 1200px;
+  margin: 0 auto;
+  display: flex;
+  align-items: center;
+  gap: 2rem;
+}
+
+.efo-logo {
+  width: 80px;
+  height: 80px;
+  filter: brightness(0) invert(1);
+}
+
+.header-text h1 {
+  margin: 0;
+  font-size: 2.5rem;
+  font-weight: 700;
+  margin-bottom: 0.5rem;
+}
+
+.header-text p {
+  margin: 0;
+  font-size: 1.1rem;
+  opacity: 0.9;
+}
+
+/* Main Container */
+.cotizador-container {
+  max-width: 1200px;
+  margin: 0 auto 0;
+  padding: 2rem 1rem 2rem;
+  display: grid;
+  grid-template-columns: 1fr 400px;
+  gap: 2rem;
+  position: relative;
+  z-index: 1;
+}
+
+/* Config Panel */
+.config-panel {
+  background: white;
+  border-radius: 16px;
+  box-shadow: 0 8px 32px rgba(0,0,0,0.1);
+  overflow: hidden;
+  border: 1px solid rgba(255,255,255,0.2);
+}
+
+/* Quote Panel */
+.quote-panel {
+  background: white;
+  border-radius: 16px;
+  box-shadow: 0 8px 32px rgba(0,0,0,0.1);
+  overflow: hidden;
+  border: 1px solid rgba(255,255,255,0.2);
+  height: fit-content;
+  position: sticky;
+  top: 2rem;
+}
+
+/* Step Headers */
+.step-header {
+  background: linear-gradient(135deg, #006068 0%, #006068 100%);
+  color: white;
+  padding: 1.5rem 2rem;
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+.step-number {
+  background: rgba(255,255,255,0.2);
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: bold;
+  font-size: 0.9rem;
+}
+
+.step-header h3 {
+  margin: 0;
+  font-size: 1.3rem;
+  font-weight: 600;
+  color: white;
+}
+
+/* Config Sections */
+.config-section {
+  padding: 2rem;
+  border-bottom: 1px solid #f0f0f0;
+}
+
+.config-section:last-child {
+  border-bottom: none;
+}
+
+.config-section h4 {
+  margin: 0 0 1.5rem 0;
+  color: var(--efo-primary);
+  font-size: 1.1rem;
+  font-weight: 600;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+/* Connectors Grid */
+.connectors-grid {
+  display: grid;
+  grid-template-columns: 1fr auto 1fr;
+  gap: 1rem;
+  align-items: end;
+}
+
+.connector-config label {
+  display: block;
+  font-weight: 500;
+  color: #333;
+  margin-bottom: 0.5rem;
+}
+
+.connector-separator {
+  font-size: 1.5rem;
+  color: #006068;
+  font-weight: bold;
+  text-align: center;
+  padding: 0.5rem;
+}
+
+/* Form Elements */
+.config-select {
+  width: 100%;
+  padding: 0.75rem 1rem;
+  border: 2px solid #e2e8f0;
+  border-radius: 8px;
+  font-size: 0.95rem;
+  background: white;
+  transition: all 0.2s ease;
+}
+
+.config-select:focus {
+  outline: none;
+  border-color: #006068;
+  box-shadow: 0 0 0 3px rgba(0, 96, 104, 0.1);
+}
+
+/* Specs Grid */
+.specs-grid {
+  display: grid;
+  gap: 1.5rem;
+}
+
+.spec-field label {
+  display: block;
+  font-weight: 500;
+  color: #333;
+  margin-bottom: 0.75rem;
+}
+
+/* Radio Group */
+.radio-group {
+  display: grid;
+  gap: 0.75rem;
+}
+
+.radio-option {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 1rem;
+  border: 2px solid #e2e8f0;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.radio-option:hover {
+  border-color: #006068;
+  background: #f8fffe;
+}
+
+.radio-option input[type="radio"] {
+  margin: 0;
+  width: 18px;
+  height: 18px;
+  accent-color: #006068;
+}
+
+.radio-option input[type="radio"]:checked + .radio-label {
+  color: #006068;
+}
+
+.radio-label {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+}
+
+.radio-label strong {
+  font-size: 0.95rem;
+}
+
+.radio-label small {
+  color: #666;
+  font-size: 0.85rem;
+}
+
+/* Dimensions Grid */
+.dimensions-grid {
+  display: grid;
+  grid-template-columns: 1fr 200px;
+  gap: 1.5rem;
+}
+
+.dimension-field label {
+  display: block;
+  font-weight: 500;
+  color: #333;
+  margin-bottom: 0.5rem;
+}
+
+/* Quantity Selector */
+.quantity-selector {
+  display: flex;
+  border: 2px solid #e2e8f0;
+  border-radius: 8px;
+  overflow: hidden;
+}
+
+.qty-btn {
+  width: 40px;
+  height: 40px;
+  border: none;
+  background: #f8f9fa;
+  color: #006068;
+  font-size: 1.2rem;
+  font-weight: bold;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.qty-btn:hover {
+  background: #006068;
+  color: white;
+}
+
+.qty-input {
+  flex: 1;
+  border: none;
+  text-align: center;
+  font-size: 1rem;
+  font-weight: 500;
+  padding: 0.5rem;
+}
+
+.qty-input:focus {
+  outline: none;
+}
+
+/* Extras Grid */
+.extras-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: 1rem;
+}
+
+.extra-checkbox {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 1rem;
+  border: 2px solid #e2e8f0;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  position: relative;
+}
+
+.extra-checkbox:hover {
+  border-color: #006068;
+  background: #f8fffe;
+}
+
+.extra-checkbox input[type="checkbox"] {
+  display: none;
+}
+
+.checkmark {
+  width: 20px;
+  height: 20px;
+  border: 2px solid #e2e8f0;
+  border-radius: 4px;
+  position: relative;
+  transition: all 0.2s ease;
+}
+
+.extra-checkbox input[type="checkbox"]:checked + .checkmark {
+  background: #006068;
+  border-color: #006068;
+}
+
+.extra-checkbox input[type="checkbox"]:checked + .checkmark::after {
+  content: '✓';
+  position: absolute;
+  color: white;
+  font-size: 0.8rem;
+  font-weight: bold;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+}
+
+.extra-info {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+}
+
+.extra-name {
+  font-weight: 500;
+  color: #333;
+}
+
+.extra-price {
+  font-size: 0.9rem;
+  color: #006068;
+  font-weight: 600;
+}
+
+/* Quote Summary */
+.quote-summary {
+  padding: 2rem;
+}
+
+.product-preview {
+  margin-bottom: 2rem;
+}
+
+.product-preview h4 {
+  margin: 0 0 1rem 0;
+  color: #006068;
+  font-size: 1.1rem;
+  font-weight: 600;
+}
+
+.config-summary {
+  background: #f8f9fa;
+  border-radius: 8px;
+  padding: 1rem;
+}
+
+.summary-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0.5rem 0;
+  border-bottom: 1px solid #e2e8f0;
+}
+
+.summary-item:last-child {
+  border-bottom: none;
+}
+
+.summary-item span:first-child {
+  color: #666;
+  font-size: 0.9rem;
+}
+
+.summary-item span:last-child {
+  font-weight: 500;
+  color: #333;
+}
+
+/* Price Breakdown */
+.price-breakdown {
+  background: #f8f9fa;
+  border-radius: 8px;
+  padding: 1.5rem;
+  margin-bottom: 2rem;
+}
+
+.price-breakdown h4 {
+  margin: 0 0 1rem 0;
+  color: #006068;
+  font-size: 1.1rem;
+  font-weight: 600;
+}
+
+.price-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0.5rem 0;
+  color: #666;
+}
+
+.price-total {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 1rem 0 0 0;
+  margin-top: 1rem;
+  border-top: 2px solid #006068;
+  font-size: 1.2rem;
+  font-weight: bold;
+  color: #006068;
+}
+
+/* Quote Actions */
+.quote-actions {
+  display: grid;
+  gap: 1rem;
+}
+
+.quote-btn, .cart-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  padding: 1rem 1.5rem;
+  border: none;
+  border-radius: 8px;
+  font-size: 1rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  text-decoration: none;
+}
+
+.quote-btn {
+  background: linear-gradient(135deg, var(--efo-primary) 0%, var(--efo-primary-dark) 100%);
+  color: white;
+}
+
+.quote-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(0, 96, 104, 0.3);
+}
+
+.quote-btn.success {
+  background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+}
+
+.quote-btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+  transform: none;
+  box-shadow: none;
+}
+
+.cart-btn {
+  background: white;
+  color: #006068;
+  border: 2px solid #006068;
+}
+
+.cart-btn:hover {
+  background: #006068;
+  color: white;
+  transform: translateY(-2px);
+}
+
+/* Responsive Design */
+@media (max-width: 1024px) {
+  .cotizador-container {
+    grid-template-columns: 1fr;
+    gap: 1.5rem;
+  }
+  
+  .quote-panel {
+    position: static;
+  }
+  
+  .logo-section {
+    flex-direction: column;
+    text-align: center;
+    gap: 1rem;
+  }
+  
+  .header-text h1 {
+    font-size: 2rem;
+  }
+}
+
+@media (max-width: 768px) {
+  .cotizador-header {
+    padding: 1.5rem 1rem;
+  }
+  
+  .config-section {
+    padding: 1.5rem;
+  }
+  
+  .quote-summary {
+    padding: 1.5rem;
+  }
+  
+  .connectors-grid {
+    grid-template-columns: 1fr;
+    gap: 1rem;
+  }
+  
+  .connector-separator {
+    display: none;
+  }
+  
+  .dimensions-grid {
+    grid-template-columns: 1fr;
+  }
+  
+  .extras-grid {
+    grid-template-columns: 1fr;
+  }
+  
+  .header-text h1 {
+    font-size: 1.5rem;
+  }
+  
+  .header-text p {
+    font-size: 1rem;
+  }
+}
+
+/* Loading States */
+.quote-btn:disabled {
+  position: relative;
+}
+
+.quote-btn:disabled::after {
+  content: '';
+  position: absolute;
+  width: 16px;
+  height: 16px;
+  border: 2px solid transparent;
+  border-top: 2px solid currentColor;
+  border-radius: 50%;
+  animation: spin 0.8s linear infinite;
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+/* Success Animation */
+@keyframes checkmark {
+  0% { transform: scale(0); }
+  50% { transform: scale(1.2); }
+  100% { transform: scale(1); }
+}
+
+.quote-btn.success {
+  animation: checkmark 0.3s ease-out;
+}
+
+/* Add Patch Cord Button */
+.add-patchcord-btn {
+  width: 100%;
+  background: linear-gradient(135deg, #006068 0%, #004045 100%);
+  color: white;
+  border: none;
+  border-radius: 8px;
+  padding: 12px;
+  font-size: 0.9rem;
+  font-weight: 600;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  margin-top: 1rem;
+  transition: all 0.2s ease;
+}
+
+.add-patchcord-btn:hover:not(:disabled) {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(0, 96, 104, 0.3);
+}
+
+.add-patchcord-btn:disabled {
+  background: #cccccc;
+  cursor: not-allowed;
+  transform: none;
+}
+
+/* Patch Cords List */
+.patchcords-list {
+  border-top: 1px solid #f0f0f0;
+  padding-top: 1rem;
+  margin-top: 1rem;
+}
+
+.patchcords-list h4 {
+  margin: 0 0 1rem 0;
+  color: #006068;
+  font-size: 1.1rem;
+  font-weight: 600;
+}
+
+.patchcord-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background: #f8f9fa;
+  border: 1px solid #e9ecef;
+  border-radius: 8px;
+  padding: 12px;
+  margin-bottom: 8px;
+}
+
+.patchcord-info {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.patchcord-title {
+  font-weight: 600;
+  color: #333;
+  font-size: 0.9rem;
+}
+
+.patchcord-details {
+  font-size: 0.8rem;
+  color: #666;
+}
+
+.patchcord-price {
+  font-weight: 600;
+  color: #006068;
+  font-size: 0.9rem;
+}
+
+.remove-patchcord-btn {
+  background: #dc3545;
+  color: white;
+  border: none;
+  border-radius: 6px;
+  padding: 8px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s ease;
+}
+
+.remove-patchcord-btn:hover {
+  background: #c82333;
+  transform: scale(1.05);
+}
+
+.total-cotizacion {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 12px 0;
+  border-top: 2px solid #006068;
+  margin-top: 12px;
+  font-size: 1.1rem;
+  font-weight: 700;
+  color: #006068;
+}

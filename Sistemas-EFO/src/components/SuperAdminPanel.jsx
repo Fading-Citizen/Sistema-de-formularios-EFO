@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../contexts/AuthContext';
 import { useSuperAdmin, SYSTEM_STATUS, DASHBOARD_TYPES } from '../contexts/SuperAdminContext';
 import logoEFO from '../assets/images/Logoefo.png';
@@ -8,7 +9,6 @@ import {
   Users,
   BarChart3,
   Server,
-  Plus,
   Eye,
   Edit,
   Trash2,
@@ -30,12 +30,14 @@ import {
   ChevronRight,
   AlertCircle,
   CheckCircle,
-  Clock
+  Clock,
+  ExternalLink
 } from 'lucide-react';
 import './SuperAdminPanel.css';
 
 const SuperAdminPanel = () => {
   const { user, logout, getUserRoleLabel } = useAuth();
+  const navigate = useNavigate();
   const { 
     systems, 
     getOverallMetrics, 
@@ -47,7 +49,6 @@ const SuperAdminPanel = () => {
   } = useSuperAdmin();
 
   const [activeTab, setActiveTab] = useState('overview');
-  const [showCreateSystem, setShowCreateSystem] = useState(false);
 
   const metrics = getOverallMetrics();
 
@@ -95,8 +96,23 @@ const SuperAdminPanel = () => {
 
   const handleSystemAccess = (system) => {
     if (system.status === SYSTEM_STATUS.ACTIVE) {
-      // Redirigir al sistema específico
-      window.open(system.url, '_blank');
+      // Para el sistema de formularios, ir directamente al dashboard administrativo
+      if (system.id === 1 || system.name.includes('Crédito')) {
+        navigate('/admin/dashboard');
+      }
+      // Usar navegación interna para sistemas EFO
+      else if (system.url.startsWith('/admin')) {
+        navigate(system.url);
+      } else if (system.url.startsWith('/patch-cords')) {
+        navigate(system.url);
+      } else if (system.url.startsWith('/form/')) {
+        navigate(system.url);
+      } else if (system.url === '/') {
+        navigate('/');
+      } else {
+        // Para sistemas externos, abrir en nueva ventana
+        window.open(system.url, '_blank');
+      }
     }
   };
 
@@ -111,9 +127,9 @@ const SuperAdminPanel = () => {
               <div className="header-info">
                 <h1>
                   <Crown size={24} />
-                  Super Admin Panel
+                  Panel Super Admin - Sistemas EFO
                 </h1>
-                <p>Centro de control - Ecosistema EFO</p>
+                <p>Centro de control del ecosistema empresarial</p>
               </div>
             </div>
           </div>
@@ -170,13 +186,6 @@ const SuperAdminPanel = () => {
           >
             <Users size={16} />
             Administradores
-          </button>
-          <button 
-            className={`nav-tab ${activeTab === 'analytics' ? 'active' : ''}`}
-            onClick={() => setActiveTab('analytics')}
-          >
-            <Activity size={16} />
-            Analíticas
           </button>
         </div>
       </nav>
@@ -235,17 +244,6 @@ const SuperAdminPanel = () => {
 
             {/* Quick Access Systems */}
             <div className="quick-access-section">
-              <div className="section-header">
-                <h2>Acceso Rápido a Sistemas</h2>
-                <button 
-                  className="create-system-btn"
-                  onClick={() => setShowCreateSystem(true)}
-                >
-                  <Plus size={16} />
-                  Crear Sistema
-                </button>
-              </div>
-
               <div className="systems-grid">
                 {systems.map(system => (
                   <div key={system.id} className={`system-card ${system.status}`}>
@@ -301,18 +299,6 @@ const SuperAdminPanel = () => {
         {/* Systems Tab */}
         {activeTab === 'systems' && (
           <div className="systems-section">
-            <div className="section-header">
-              <h2>Gestión de Sistemas</h2>
-              <div className="header-actions">
-                <button 
-                  className="create-system-btn"
-                  onClick={() => setShowCreateSystem(true)}
-                >
-                  <Plus size={16} />
-                  Nuevo Sistema
-                </button>
-              </div>
-            </div>
 
             <div className="systems-table">
               <table>
@@ -398,14 +384,56 @@ const SuperAdminPanel = () => {
             <p>Panel de gestión de usuarios y permisos (En desarrollo)</p>
           </div>
         )}
-
-        {activeTab === 'analytics' && (
-          <div className="analytics-section">
-            <h2>Panel de Analíticas</h2>
-            <p>Métricas y reportes del ecosistema (En desarrollo)</p>
-          </div>
-        )}
       </main>
+
+      {/* Sección de Enlaces para Clientes - Movida al final */}
+      <div className="client-links-super-section">
+        <div className="client-links-super-container">
+          <div className="client-links-super-grid">
+            <div className="client-link-super-card">
+              <div className="link-super-icon">
+                <FileText size={20} />
+              </div>
+              <div className="link-super-content">
+                <h4>Subsistema de Crédito</h4>
+                <div className="link-super-url">
+                  <code>http://localhost:5173/</code>
+                  <button 
+                    className="copy-super-btn"
+                    onClick={() => {
+                      navigator.clipboard.writeText('http://localhost:5173/');
+                      alert('Enlace copiado');
+                    }}
+                  >
+                    📋
+                  </button>
+                </div>
+              </div>
+            </div>
+            
+            <div className="client-link-super-card">
+              <div className="link-super-icon">
+                <Package size={20} />
+              </div>
+              <div className="link-super-content">
+                <h4>Subsistema de Patch Cords</h4>
+                <div className="link-super-url">
+                  <code>http://localhost:5173/patch-cords</code>
+                  <button 
+                    className="copy-super-btn"
+                    onClick={() => {
+                      navigator.clipboard.writeText('http://localhost:5173/patch-cords');
+                      alert('Enlace copiado');
+                    }}
+                  >
+                    📋
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
     </div>
   );
 };

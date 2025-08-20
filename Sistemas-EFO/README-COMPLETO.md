@@ -1,66 +1,68 @@
-# 📋 Formularios EFO - Sistema Completo
+# 🏢 Sistemas EFO - Plataforma Completa
 
-Sistema completo de gestión de formularios para **ELECTROL FIBRA ÓPTICA SAS** con React + WordPress.
+Plataforma completa de gestión de sistemas para **ELECTROL FIBRA ÓPTICA SAS** con React + Vite.
 
 ## ✨ Características
 
-- 📝 **Formularios múltiples**: Crédito, contacto, soporte
-- 📊 **Dashboard administrativo** con filtros avanzados
-- 🔐 **Sistema de autenticación** para administradores
-- 💾 **Base de datos integrada** con WordPress
+- � **Subsistema de Crédito**: Formularios de solicitud completos
+- 🔌 **Subsistema de Patch Cords**: Configurador y cotizador
+- 📊 **Dashboard administrativo** con control completo
+- 🔐 **Sistema de autenticación** multinivel
 - 📧 **Envío automático de emails** con archivos adjuntos
 - 🎨 **Diseño responsive** moderno
-- ⚡ **Tiempo real** - ve los formularios al instante
+- ⚡ **Tiempo real** - gestión instantánea
 
 ## 🚀 Instalación Completa
 
-### Paso 1: Instalar la App React
+### Paso 1: Instalar la Aplicación
 
 1. **Copiar archivos al servidor:**
    ```bash
-   # Copiar toda la carpeta a ReactPress
-   cp -r formulario-credito/ /wp-content/reactpress/apps/
+   # Copiar toda la carpeta al servidor web
+   cp -r Sistemas-EFO/ /var/www/html/
    ```
 
 2. **Instalar dependencias y compilar:**
    ```bash
-   cd /wp-content/reactpress/apps/formulario-credito
+   cd /var/www/html/Sistemas-EFO
    npm install
    npm run build
    ```
 
-### Paso 2: 🔧 Configurar Backend WordPress
+### Paso 2: 🗄️ Configurar Base de Datos
 
-**IMPORTANTE**: Agregar este código completo al `functions.php` de tu tema:
+El sistema requiere una base de datos MySQL/MariaDB. Crear la tabla necesaria:
 
-```php
-<?php
-// Copiar todo el contenido del archivo: backend/formulario-efo-handler.php
-// Y pegarlo en functions.php de tu tema activo
-
-// O incluir el archivo directamente:
-require_once get_template_directory() . '/formulario-efo-handler.php';
-?>
+```sql
+CREATE TABLE efo_form_submissions (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    submission_date DATETIME DEFAULT CURRENT_TIMESTAMP,
+    form_type VARCHAR(50) NOT NULL,
+    form_data JSON NOT NULL,
+    attachments TEXT,
+    ip_address VARCHAR(45),
+    status ENUM('nuevo', 'pendiente', 'completado') DEFAULT 'nuevo',
+    admin_notes TEXT
+);
 ```
 
 ### Paso 3: 📧 Configurar Emails
 
-**Cambiar estos emails en el código PHP:**
+**Cambiar estos emails en el código del backend:**
 
-```php
-$additional_emails = array(
+```javascript
+const additionalEmails = [
     'creditos@electrolfibra.com',        // ✏️ CAMBIAR POR EMAIL REAL
     'administracion@electrolfibra.com',  // ✏️ CAMBIAR POR EMAIL REAL
     'formularios@electrolfibra.com'      // ✏️ CAMBIAR POR EMAIL REAL
-);
+];
 ```
 
-### Paso 4: 🎛️ Configurar ReactPress
+### Paso 4: � Configurar Servidor Web
 
-1. En WordPress Admin: `ReactPress` → `Reload`
-2. Click `Add Page` junto a "formulario-credito"
-3. Asignar URL: `/formularios-efo`
-4. Guardar
+1. Configurar el servidor web (Apache/Nginx) para servir la aplicación
+2. Asegurar que el directorio `dist/` sea accesible públicamente
+3. Configurar las rutas para SPA (Single Page Application)
 
 ## 🔐 Acceso Administrativo
 
@@ -75,9 +77,9 @@ $additional_emails = array(
 
 ## 🗄️ Base de Datos
 
-El sistema crea automáticamente la tabla:
+El sistema utiliza una tabla principal:
 ```sql
-wp_efo_form_submissions
+efo_form_submissions
 ├── id (Primary Key)
 ├── submission_date 
 ├── form_type (credito, contacto, soporte)
@@ -147,7 +149,7 @@ formulario-credito/
 │   ├── contexts/           # Context API
 │   │   └── AuthContext.jsx
 │   └── App.jsx            # App principal
-├── backend/               # Backend PHP
+├── backend/               # Backend API
 │   └── formulario-efo-handler.php
 ├── dist/                  # Build de producción
 └── package.json
@@ -156,18 +158,18 @@ formulario-credito/
 ## 🚨 Troubleshooting
 
 ### Formularios no se envían:
-1. ✅ Verificar que el archivo PHP esté en `functions.php`
+1. ✅ Verificar que el backend esté configurado correctamente
 2. ✅ Comprobar permisos de archivos
-3. ✅ Revisar logs de WordPress: `/wp-content/debug.log`
+3. ✅ Revisar logs del servidor web
 
 ### Dashboard vacío:
-1. ✅ Verificar que el backend esté configurado
-2. ✅ Comprobar la conexión AJAX
+1. ✅ Verificar que el backend esté funcionando
+2. ✅ Comprobar la conexión a la base de datos
 3. ✅ Revisar la consola del navegador (F12)
 
 ### Archivos no suben:
-1. ✅ Verificar permisos de `/wp-content/uploads/`
-2. ✅ Aumentar límites PHP si es necesario
+1. ✅ Verificar permisos del directorio de uploads
+2. ✅ Aumentar límites del servidor si es necesario
 3. ✅ Comprobar tipos de archivo permitidos
 
 ## 📞 Soporte Técnico
@@ -175,8 +177,8 @@ formulario-credito/
 Para problemas técnicos:
 
 1. **Revisar consola del navegador** (F12) para errores JavaScript
-2. **Verificar logs de WordPress** en `/wp-content/debug.log`
-3. **Comprobar configuración ReactPress** en WordPress admin
+2. **Verificar logs del servidor** para errores del backend
+3. **Comprobar configuración de la base de datos**
 4. **Verificar permisos de archivos** en el servidor
 
 ## 🔄 Próximas Actualizaciones
@@ -201,3 +203,31 @@ Para problemas técnicos:
 © 2025 ELECTROL FIBRA ÓPTICA SAS. Todos los derechos reservados.
 
 **Sistema desarrollado específicamente para EFO** - No redistribuir sin autorización.
+
+
+Login: http://localhost:5174/admin/login
+Dashboard: http://localhost:5174/admin/dashboard
+Super Admin Panel: http://localhost:5174/admin/super-admin
+Formularios públicos: http://localhost:5174/
+
+
+Colores del sistema
+Principal
+#006068
+
+Secundario
+#54595F
+
+Texto
+#FFFFFF (si el fondo es oscuro)
+#006068 (si el fondo es claro)
+
+Énfasis
+#F8FA00
+
+Colores personalizados
+Detalles y bordes
+#87F7EE
+
+fondo
+#E9FFFE

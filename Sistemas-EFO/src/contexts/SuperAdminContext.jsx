@@ -40,12 +40,12 @@ export const DASHBOARD_TYPES = {
 const SYSTEMS_DATABASE = [
   {
     id: 1,
-    name: 'Sistema de Formularios EFO',
+    name: 'Subsistema de Crédito - Sistemas EFO',
     type: SYSTEM_TYPES.FORMS,
-    description: 'Gestión de formularios de crédito, contacto y solicitudes generales',
+    description: 'Gestión de formularios de crédito y solicitudes generales',
     status: SYSTEM_STATUS.ACTIVE,
     version: '1.0.0',
-    url: '/admin/dashboard',
+    url: '/form/credito-efo',
     icon: 'FileText',
     color: '#006068',
     admins: [1, 2, 3, 4], // IDs de administradores
@@ -70,33 +70,33 @@ const SYSTEMS_DATABASE = [
   },
   {
     id: 2,
-    name: 'Patch cords EFO',
-    type: SYSTEM_TYPES.CRM,
-    description: 'Gestión de patch cords y cables de fibra óptica',
-    status: SYSTEM_STATUS.DEVELOPMENT,
-    version: '0.8.0',
-    url: '/patch-cords/dashboard',
-    icon: 'Users',
-    color: '#7c3aed',
-    admins: [1], // Solo super admin por ahora
+    name: 'Subsistema de Patch Cords - Sistemas EFO',
+    type: SYSTEM_TYPES.INVENTORY,
+    description: 'Configurador y gestión de patch cords de fibra óptica',
+    status: SYSTEM_STATUS.ACTIVE,
+    version: '1.0.0',
+    url: '/admin/patch-cords',
+    icon: 'Package',
+    color: '#10b981',
+    admins: [1, 2], // Super admin y credit admin
     dashboards: [
       {
         id: 201,
-        name: 'Dashboard Patch Cords',
-        type: DASHBOARD_TYPES.ANALYTICAL,
-        url: '/patch-cords/inventory',
-        description: 'Inventario y análisis de patch cords'
+        name: 'Panel de Precios',
+        type: DASHBOARD_TYPES.OPERATIONAL,
+        url: '/admin/patch-cords',
+        description: 'Gestión de precios de conectores, cables y servicios'
       },
       {
         id: 202,
-        name: 'Dashboard Cables',
+        name: 'Configurador Público',
         type: DASHBOARD_TYPES.OPERATIONAL,
-        url: '/patch-cords/cables',
-        description: 'Gestión de cables de fibra óptica'
+        url: '/patch-cords',
+        description: 'Configurador público para clientes'
       }
     ],
     metrics: {
-      totalUsers: 1,
+      totalUsers: 2,
       activePatchCords: 45,
       monthlyGrowth: 'N/A',
       uptime: 'N/A'

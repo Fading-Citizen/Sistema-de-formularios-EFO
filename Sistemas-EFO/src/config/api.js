@@ -1,14 +1,14 @@
 // Configuración de API para desarrollo y producción en AWS
 const config = {
   development: {
-    API_BASE_URL: 'http://localhost:3001',
+    API_BASE_URL: 'http://localhost:3002',
     API_ENDPOINTS: {
-      SUBMIT_FORM: 'http://localhost:3001/api/forms/submit',
-      GET_SUBMISSIONS: 'http://localhost:3001/api/forms/submissions',
-      UPDATE_SUBMISSION: 'http://localhost:3001/api/forms/update',
-      DELETE_SUBMISSION: 'http://localhost:3001/api/forms/delete',
-      AUTH_LOGIN: 'http://localhost:3001/api/auth/login',
-      AUTH_PROFILE: 'http://localhost:3001/api/auth/profile'
+      SUBMIT_FORM: 'http://localhost:3002/api/forms/submit',
+      GET_SUBMISSIONS: 'http://localhost:3002/api/forms/submissions',
+      UPDATE_SUBMISSION: 'http://localhost:3002/api/forms/update',
+      DELETE_SUBMISSION: 'http://localhost:3002/api/forms/delete',
+      AUTH_LOGIN: 'http://localhost:3002/api/auth/login',
+      AUTH_PROFILE: 'http://localhost:3002/api/auth/profile'
     }
   },
   production: {

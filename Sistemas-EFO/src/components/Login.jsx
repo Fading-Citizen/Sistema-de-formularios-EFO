@@ -14,11 +14,25 @@ const Login = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState('');
 
-  const { login } = useAuth();
+  const { login, USER_ROLES } = useAuth();
   const navigate = useNavigate();
   const location = useLocation();
 
-  const from = location.state?.from?.pathname || '/admin/dashboard';
+  // Función para determinar la ruta de redirección según el rol
+  const getDefaultRouteForRole = (role) => {
+    switch (role) {
+      case USER_ROLES.SUPER_ADMIN:
+        return '/admin/super-admin';
+      case USER_ROLES.CREDIT_ADMIN:
+      case USER_ROLES.GENERAL_ADMIN:
+      case USER_ROLES.VIEWER:
+        return '/admin/dashboard';
+      default:
+        return '/admin/dashboard';
+    }
+  };
+
+  const from = location.state?.from?.pathname;
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -28,7 +42,9 @@ const Login = () => {
     const result = await login(credentials.username, credentials.password);
 
     if (result.success) {
-      navigate(from, { replace: true });
+      // Si hay una ruta específica solicitada, usar esa; sino, usar la ruta por defecto del rol
+      const redirectTo = from || getDefaultRouteForRole(result.user.role);
+      navigate(redirectTo, { replace: true });
     } else {
       setError(result.error);
     }
@@ -52,7 +68,7 @@ const Login = () => {
             <img src={logoEFO} alt="EFO Logo" className="logo-login" />
           </div>
           <h1>Acceso Administrativo</h1>
-          <p>Panel de control - Formularios EFO</p>
+          <p>Panel de control - Sistemas EFO</p>
         </div>
 
         <form onSubmit={handleSubmit} className="login-form">
@@ -120,12 +136,12 @@ const Login = () => {
             <div className="user-demo-item">
               <strong>Admin Crédito</strong>
               <code>creditadmin / efo2025credit</code>
-              <span>Solo formularios de crédito</span>
+              <span>Solo subsistema de crédito</span>
             </div>
             <div className="user-demo-item">
               <strong>Admin General</strong>
               <code>generaladmin / efo2025general</code>
-              <span>Formularios generales</span>
+              <span>Subsistemas generales</span>
             </div>
             <div className="user-demo-item">
               <strong>Solo Lectura</strong>

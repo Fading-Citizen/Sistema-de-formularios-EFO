@@ -1,20 +1,32 @@
-# Formulario de Crédito - ReactPress
+# Sistemas EFO - Plataforma Integrada
 
-Este es un formulario de solicitud de crédito desarrollado para ser usado con ReactPress en WordPress.
+Esta es una plataforma de gestión de sistemas para ELECTROL FIBRA ÓPTICA SAS, desarrollada con React + Vite.
 
-## Instalación en ReactPress
+## 🌟 Subsistemas Incluidos
+
+### 📋 Subsistema de Crédito
+- Formulario de solicitud de crédito completo
+- Validación de datos en tiempo real
+- Envío automático de documentos
+
+### 🔌 Subsistema de Patch Cords
+- Configurador de patch cords personalizados
+- Cotizador automático de precios
+- Panel administrativo para gestión de productos
+
+## Instalación
 
 ### Paso 1: Preparar la aplicación
 
 1. **En tu servidor/comando:**
    ```bash
    cd /opt/bitnami/wordpress/wp-content/reactpress/apps
-   # Copia toda la carpeta 'formulario-credito' aquí
+   # Copia toda la carpeta 'Sistemas-EFO' aquí
    ```
 
 2. **Instalar dependencias:**
    ```bash
-   cd formulario-credito
+   cd Sistemas-EFO
    npm install
    ```
 
@@ -27,7 +39,7 @@ Este es un formulario de solicitud de crédito desarrollado para ser usado con R
 
 1. **Subir solo la carpeta `dist`** a tu servidor:
    ```
-   /wp-content/reactpress/formulario-credito/dist/
+   /wp-content/reactpress/sistemas-efo/dist/
    ```
 
 2. **En WordPress admin:**

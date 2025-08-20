@@ -1,4 +1,4 @@
-// Mock API Server para desarrollo local - Sistema independiente
+// Mock API Server para desarrollo local - Sistemas EFO
 import { createServer } from 'http';
 import { parse } from 'url';
 
@@ -59,6 +59,72 @@ const server = createServer((req, res) => {
   }
 
   const { pathname, query } = parse(req.url, true);
+  
+  // Auth endpoints
+  if (pathname === '/api/auth/login') {
+    if (req.method === 'POST') {
+      let body = '';
+      req.on('data', chunk => {
+        body += chunk.toString();
+      });
+      
+      req.on('end', () => {
+        try {
+          const { username, password } = JSON.parse(body);
+          
+          // Mock users
+          const users = {
+            'superadmin': { 
+              password: 'efo2025super', 
+              role: 'super_admin', 
+              name: 'Super Administrador',
+              department: 'TI'
+            },
+            'creditadmin': { 
+              password: 'efo2025credit', 
+              role: 'credit_admin', 
+              name: 'Admin Crédito',
+              department: 'Crédito'
+            },
+            'viewer': { 
+              password: 'efo2025view', 
+              role: 'viewer', 
+              name: 'Consultor',
+              department: 'Consulta'
+            }
+          };
+          
+          if (users[username] && users[username].password === password) {
+            res.writeHead(200, { 'Content-Type': 'application/json' });
+            res.end(JSON.stringify({
+              success: true,
+              token: 'mock-jwt-token-' + Date.now(),
+              user: {
+                id: username,
+                username: username,
+                name: users[username].name,
+                role: users[username].role,
+                department: users[username].department
+              }
+            }));
+          } else {
+            res.writeHead(401, { 'Content-Type': 'application/json' });
+            res.end(JSON.stringify({
+              success: false,
+              message: 'Credenciales inválidas'
+            }));
+          }
+        } catch (error) {
+          res.writeHead(400, { 'Content-Type': 'application/json' });
+          res.end(JSON.stringify({
+            success: false,
+            message: 'Error en el formato de datos'
+          }));
+        }
+      });
+      return;
+    }
+  }
   
   // RESTful API Routes
   if (pathname === '/api/forms/submissions') {
@@ -124,7 +190,7 @@ const server = createServer((req, res) => {
   res.end(JSON.stringify({ error: 'Endpoint not found' }));
 });
 
-const PORT = 3001;
+const PORT = 3002;
 server.listen(PORT, () => {
   console.log(`🚀 EFO API Server running on http://localhost:${PORT}`);
   console.log(`📡 API Endpoints:`);

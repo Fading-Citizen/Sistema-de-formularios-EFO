@@ -24,11 +24,12 @@ import {
   FileIcon,
   Shield,
   Settings,
-  Crown
+  Crown,
+  Cable
 } from 'lucide-react';
-import './Dashboard.css';
+import './FormularioAdmin.css';
 
-const Dashboard = () => {
+const FormularioAdmin = () => {
   const navigate = useNavigate();
   const { 
     user, 
@@ -43,7 +44,7 @@ const Dashboard = () => {
     FORM_TYPES 
   } = useAuth();
   const [submissions, setSubmissions] = useState([]);
-  const [loading, setLoading] = useState(true);
+  const [loading, setLoading] = useState(false);
   const [stats, setStats] = useState({
     total: 0,
     thisMonth: 0,
@@ -62,8 +63,21 @@ const Dashboard = () => {
   const fetchSubmissions = async () => {
     setLoading(true);
     try {
-      const url = `${API_ENDPOINTS.GET_SUBMISSIONS}&limit=50&form_type=${filterType !== 'all' ? filterType : ''}`;
-      const response = await fetch(url);
+      // Reducir límite para carga más rápida inicial
+      const url = `${API_ENDPOINTS.GET_SUBMISSIONS}&limit=20&form_type=${filterType !== 'all' ? filterType : ''}`;
+      
+      // Agregar timeout para evitar cuelgues
+      const controller = new AbortController();
+      const timeoutId = setTimeout(() => controller.abort(), 5000); // 5 segundos timeout
+      
+      const response = await fetch(url, { 
+        signal: controller.signal,
+        headers: {
+          'Cache-Control': 'no-cache'
+        }
+      });
+      
+      clearTimeout(timeoutId);
       
       if (response.ok) {
         const result = await response.json();
@@ -90,6 +104,7 @@ const Dashboard = () => {
             pending: realSubmissions.filter(s => s.estado === 'Nuevo' || s.estado === 'Pendiente').length,
             completed: realSubmissions.filter(s => s.estado === 'Completado').length
           });
+          setLoading(false);
           return;
         }
       }
@@ -100,8 +115,6 @@ const Dashboard = () => {
     } catch (error) {
       console.error('Error fetching submissions:', error);
       useMockData();
-    } finally {
-      setLoading(false);
     }
   };
 
@@ -368,16 +381,15 @@ const Dashboard = () => {
       canAccessForm(submission.formType)
     );
 
-    setTimeout(() => {
-      setSubmissions(allowedSubmissions);
-      setStats({
-        total: allowedSubmissions.length,
-        thisMonth: allowedSubmissions.length,
-        pending: allowedSubmissions.filter(s => s.estado === 'Pendiente').length,
-        completed: allowedSubmissions.filter(s => s.estado === 'Completado').length
-      });
-      setLoading(false);
-    }, 1000);
+    // Actualizar estado inmediatamente sin retraso artificial
+    setSubmissions(allowedSubmissions);
+    setStats({
+      total: allowedSubmissions.length,
+      thisMonth: allowedSubmissions.length,
+      pending: allowedSubmissions.filter(s => s.estado === 'Pendiente').length,
+      completed: allowedSubmissions.filter(s => s.estado === 'Completado').length
+    });
+    setLoading(false);
   };
 
   // Cargar datos al montar el componente y cuando cambia el filtro
@@ -714,8 +726,11 @@ En un entorno de producción, aquí se descargarían los archivos reales.`;
   if (loading) {
     return (
       <div className="dashboard-loading">
-        <div className="loading-spinner"></div>
-        <p>Cargando dashboard...</p>
+        <div className="loading-content">
+          <div className="loading-spinner"></div>
+          <h3>Cargando Dashboard</h3>
+          <p>Obteniendo formularios más recientes...</p>
+        </div>
       </div>
     );
   }
@@ -728,8 +743,8 @@ En un entorno de producción, aquí se descargarían los archivos reales.`;
             <div className="logo-container">
               <img src={logoEFO} alt="EFO Logo" className="logo-dashboard" />
               <div className="header-info">
-                <h1>Formularios EFO</h1>
-                <p>Panel de administración - Sistema de gestión de formularios</p>
+                <h1>Panel de Control - Sistemas EFO</h1>
+                <p>Gestión integral de subsistemas empresariales</p>
               </div>
             </div>
           </div>
@@ -745,20 +760,14 @@ En un entorno de producción, aquí se descargarían los archivos reales.`;
               Sitio Web
             </button>
             
-            {canManageUsers() && (
-              <button className="users-btn">
-                <Settings size={16} />
-                Gestión de Usuarios
-              </button>
-            )}
-            
             {user.role === 'super_admin' && (
               <button 
                 className="super-admin-btn"
-                onClick={() => navigate('/super-admin')}
+                onClick={() => navigate('/admin/super-admin')}
+                title="Panel Super Admin"
               >
                 <Crown size={16} />
-                Super Admin Panel
+                Super Admin
               </button>
             )}
             
@@ -1179,8 +1188,73 @@ En un entorno de producción, aquí se descargarían los archivos reales.`;
           </div>
         )}
       </main>
+
+      {/* Sección de Enlaces para Subsistemas - Movida al final */}
+      <div className="client-links-section">
+        <div className="client-links-container">
+          <div className="client-links-header">
+            <h3>
+              <ExternalLink size={20} />
+              Enlaces para Subsistemas
+            </h3>
+            <p>Comparte estos enlaces con tus clientes para que accedan a los subsistemas</p>
+          </div>
+          
+          <div className="client-links-grid">
+            {canAccessForm(FORM_TYPES.CREDIT) && (
+              <div className="client-link-card">
+                <div className="link-icon">
+                  <FileText size={24} />
+                </div>
+                <div className="link-content">
+                  <h4>Subsistema de Crédito</h4>
+                  <p>Para solicitudes de crédito empresarial</p>
+                  <div className="link-url">
+                    <code>http://localhost:5173/</code>
+                    <button 
+                      className="copy-btn"
+                      onClick={() => {
+                        navigator.clipboard.writeText('http://localhost:5173/');
+                        alert('Enlace copiado al portapapeles');
+                      }}
+                      title="Copiar enlace"
+                    >
+                      📋
+                    </button>
+                  </div>
+                </div>
+              </div>
+            )}
+            
+            {(user.role === 'super_admin' || user.role === 'credit_admin') && (
+              <div className="client-link-card">
+                <div className="link-icon">
+                  <Cable size={24} />
+                </div>
+                <div className="link-content">
+                  <h4>Subsistema de Patch Cords</h4>
+                  <p>Para cotizar patch cords de fibra óptica</p>
+                  <div className="link-url">
+                    <code>http://localhost:5173/patch-cords</code>
+                    <button 
+                      className="copy-btn"
+                      onClick={() => {
+                        navigator.clipboard.writeText('http://localhost:5173/patch-cords');
+                        alert('Enlace copiado al portapapeles');
+                      }}
+                      title="Copiar enlace"
+                    >
+                      📋
+                    </button>
+                  </div>
+                </div>
+              </div>
+            )}
+          </div>
+        </div>
+      </div>
     </div>
   );
 };
 
-export default Dashboard;
+export default FormularioAdmin;

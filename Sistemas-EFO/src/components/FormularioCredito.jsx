@@ -277,7 +277,7 @@ const FormularioCredito = () => {
             <img src={logoEFO} alt="EFO Logo" className="logo-img" />
             <div className="company-info">
               <h1>ELECTROL FIBRA ÓPTICA SAS</h1>
-              <p>Formulario de Solicitud de Crédito</p>
+              <p>Subsistema de Crédito - Sistemas EFO</p>
             </div>
           </div>
           <button 
