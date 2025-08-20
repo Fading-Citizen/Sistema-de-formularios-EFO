@@ -9,9 +9,87 @@ const PatchCordsAdmin = () => {
   const [activeView, setActiveView] = useState('database');
   const [displayMode, setDisplayMode] = useState('list'); // 'list' or 'cards'
   const [searchTerm, setSearchTerm] = useState('');
+  const [searchInput, setSearchInput] = useState(''); // Estado temporal para el input de búsqueda
   const [editingItems, setEditingItems] = useState({}); // Para edición inline
   const [showAddForm, setShowAddForm] = useState(false);
   const [newItemCategory, setNewItemCategory] = useState('conectores');
+  const [showTaxHistory, setShowTaxHistory] = useState(false);
+
+  // Debouncing para búsqueda (evita filtrar en cada tecla)
+  useEffect(() => {
+    const timeoutId = setTimeout(() => {
+      setSearchTerm(searchInput);
+    }, 300); // Espera 300ms después de dejar de escribir
+
+    return () => clearTimeout(timeoutId);
+  }, [searchInput]);
+  
+  // Variable global para porcentaje de impuestos con persistencia local
+  const [taxPercentage, setTaxPercentage] = useState(() => {
+    // Cargar desde localStorage o usar 16% por defecto
+    const saved = localStorage.getItem('efo_tax_percentage');
+    return saved ? parseFloat(saved) : 16;
+  });
+  
+  // Estado temporal para el input de impuestos (evita re-render en cada tecla)
+  const [taxInputValue, setTaxInputValue] = useState(taxPercentage.toString());
+  const [isSavingTax, setIsSavingTax] = useState(false);
+
+  // Efecto para sincronizar el valor del input cuando cambia taxPercentage externamente
+  useEffect(() => {
+    setTaxInputValue(taxPercentage.toString());
+  }, [taxPercentage]);
+
+  // Debouncing para guardar cambios de porcentaje
+  useEffect(() => {
+    const timeoutId = setTimeout(() => {
+      const numValue = parseFloat(taxInputValue);
+      if (!isNaN(numValue) && numValue !== taxPercentage) {
+        setIsSavingTax(true);
+        updateTaxPercentage(numValue);
+        setTimeout(() => setIsSavingTax(false), 1000); // Mostrar "guardado" por 1 segundo
+      }
+    }, 500); // Espera 500ms después de dejar de escribir
+
+    return () => clearTimeout(timeoutId);
+  }, [taxInputValue]);
+
+  // Guardar cambios de porcentaje en localStorage
+  const updateTaxPercentage = (newPercentage) => {
+    const validPercentage = Math.max(0, Math.min(100, newPercentage || 0));
+    setTaxPercentage(validPercentage);
+    localStorage.setItem('efo_tax_percentage', validPercentage.toString());
+    
+    // Log del cambio para auditoría futura
+    const changeLog = {
+      timestamp: new Date().toISOString(),
+      oldValue: taxPercentage,
+      newValue: validPercentage,
+      user: user?.email || 'unknown'
+    };
+    
+    // Guardar historial en localStorage (temporal)
+    const history = JSON.parse(localStorage.getItem('efo_tax_history') || '[]');
+    history.push(changeLog);
+    // Mantener solo los últimos 50 cambios
+    if (history.length > 50) history.shift();
+    localStorage.setItem('efo_tax_history', JSON.stringify(history));
+    
+    console.log('Porcentaje de impuestos actualizado:', changeLog);
+  };
+
+  // Función para calcular el costo final dinámicamente
+  const calculateFinalCost = (costo, envio, margenOp) => {
+    const subtotal = costo + envio + margenOp;
+    const impuestos = subtotal * (taxPercentage / 100);
+    return (subtotal + impuestos).toFixed(4);
+  };
+
+  // Función para obtener los impuestos calculados
+  const calculateTax = (costo, envio, margenOp) => {
+    const subtotal = costo + envio + margenOp;
+    return (subtotal * (taxPercentage / 100)).toFixed(4);
+  };
   
   // Debug log
   console.log('PatchCordsAdmin - user:', user);
@@ -231,13 +309,36 @@ const PatchCordsAdmin = () => {
           <p>Gestione precios y productos del sistema de cotización</p>
         </div>
         <div className="header-controls">
+          <div className="tax-control">
+            <label>% Impuestos:</label>
+            <input
+              type="number"
+              min="0"
+              max="100"
+              step="0.1"
+              value={taxInputValue}
+              onChange={(e) => setTaxInputValue(e.target.value)}
+              className="tax-input"
+              title="Este valor se guarda automáticamente después de 0.5 segundos"
+              placeholder="16"
+            />
+            <span>%</span>
+            {isSavingTax && <span className="saving-indicator">✓ Guardado</span>}
+            <button 
+              className="history-btn"
+              onClick={() => setShowTaxHistory(!showTaxHistory)}
+              title="Ver historial de cambios"
+            >
+              📊
+            </button>
+          </div>
           <div className="search-bar">
             <Search size={16} />
             <input
               type="text"
               placeholder="Buscar productos..."
-              value={searchTerm}
-              onChange={(e) => setSearchTerm(e.target.value)}
+              value={searchInput}
+              onChange={(e) => setSearchInput(e.target.value)}
             />
           </div>
           <div className="view-controls">
@@ -308,7 +409,7 @@ const PatchCordsAdmin = () => {
             <span>Producto</span>
             <span>Costo</span>
             <span>Envío</span>
-            <span>Impuestos</span>
+            <span>Impuestos ({taxPercentage}%)</span>
             <span>Margen Op.</span>
             <span>Total</span>
             <span>Acciones</span>
@@ -389,8 +490,8 @@ const PatchCordsAdmin = () => {
                   <span>${product.envio}</span>
                 </div>
                 <div className="detail-item">
-                  <span>Impuestos:</span>
-                  <span>${product.impuestos}</span>
+                  <span>Impuestos ({taxPercentage}%):</span>
+                  <span>${calculateTax(product.costo, product.envio, product.margenOp)}</span>
                 </div>
                 <div className="detail-item">
                   <span>Margen Op.:</span>
@@ -398,7 +499,7 @@ const PatchCordsAdmin = () => {
                 </div>
                 <div className="detail-item total">
                   <span>Total:</span>
-                  <span>${product.costoFinalUnitario}</span>
+                  <span>${calculateFinalCost(product.costo, product.envio, product.margenOp)}</span>
                 </div>
               </div>
             </div>
@@ -525,7 +626,7 @@ const PatchCordsAdmin = () => {
             onChange={(e) => setEditValues({...editValues, margenOp: parseFloat(e.target.value) || 0})}
           />
           <span className="total-calc">
-            ${(editValues.costo + editValues.envio + editValues.impuestos + editValues.margenOp).toFixed(4)}
+            ${calculateFinalCost(editValues.costo, editValues.envio, editValues.margenOp)}
           </span>
           <div className="actions">
             <button className="save-btn" onClick={handleSave}>
@@ -544,9 +645,9 @@ const PatchCordsAdmin = () => {
         <span className="product-name">{productKey.replace(/_/g, ' ')}</span>
         <span>${product.costo}</span>
         <span>${product.envio}</span>
-        <span>${product.impuestos}</span>
+        <span>${calculateTax(product.costo, product.envio, product.margenOp)}</span>
         <span>${product.margenOp}</span>
-        <span className="total">${product.costoFinalUnitario}</span>
+        <span className="total">${calculateFinalCost(product.costo, product.envio, product.margenOp)}</span>
         <div className="actions">
           <button 
             className="edit-btn"
@@ -711,8 +812,8 @@ const PatchCordsAdmin = () => {
       if (newProduct.category === 'conectores') {
         productData.costo = newProduct.costo;
         productData.envio = newProduct.envio;
-        productData.impuestos = newProduct.impuestos;
         productData.margenOp = newProduct.margenOp;
+        // Los impuestos se calculan dinámicamente
       } else if (newProduct.category === 'cables') {
         productData.costoPorMetro = newProduct.costoPorMetro;
         productData.descripcion = newProduct.descripcion;
@@ -778,15 +879,6 @@ const PatchCordsAdmin = () => {
                   />
                 </div>
                 <div className="form-group">
-                  <label>Impuestos:</label>
-                  <input
-                    type="number"
-                    step="0.01"
-                    value={newProduct.impuestos}
-                    onChange={(e) => setNewProduct({...newProduct, impuestos: parseFloat(e.target.value) || 0})}
-                  />
-                </div>
-                <div className="form-group">
                   <label>Margen Operativo:</label>
                   <input
                     type="number"
@@ -794,6 +886,9 @@ const PatchCordsAdmin = () => {
                     value={newProduct.margenOp}
                     onChange={(e) => setNewProduct({...newProduct, margenOp: parseFloat(e.target.value) || 0})}
                   />
+                </div>
+                <div className="form-note">
+                  <small>Los impuestos se calculan automáticamente al {taxPercentage}%</small>
                 </div>
               </>
             )}
@@ -842,6 +937,67 @@ const PatchCordsAdmin = () => {
               </button>
             </div>
           </form>
+        </div>
+      </div>
+    );
+  };
+
+  // Componente para mostrar historial de cambios de impuestos
+  const TaxHistoryModal = () => {
+    if (!showTaxHistory) return null;
+
+    const history = JSON.parse(localStorage.getItem('efo_tax_history') || '[]');
+
+    return (
+      <div className="modal-overlay">
+        <div className="modal">
+          <div className="modal-header">
+            <h3>Historial de Cambios - Porcentaje de Impuestos</h3>
+            <button className="close-btn" onClick={() => setShowTaxHistory(false)}>
+              <X size={18} />
+            </button>
+          </div>
+          
+          <div className="modal-body">
+            {history.length === 0 ? (
+              <p>No hay cambios registrados</p>
+            ) : (
+              <div className="history-list">
+                {history.slice().reverse().map((change, index) => (
+                  <div key={index} className="history-item">
+                    <div className="history-date">
+                      {new Date(change.timestamp).toLocaleString('es-MX')}
+                    </div>
+                    <div className="history-change">
+                      <span className="old-value">{change.oldValue}%</span>
+                      <span className="arrow">→</span>
+                      <span className="new-value">{change.newValue}%</span>
+                    </div>
+                    <div className="history-user">
+                      Usuario: {change.user}
+                    </div>
+                  </div>
+                ))}
+              </div>
+            )}
+          </div>
+          
+          <div className="modal-footer">
+            <button className="btn-cancel" onClick={() => setShowTaxHistory(false)}>
+              Cerrar
+            </button>
+            <button 
+              className="btn-clear"
+              onClick={() => {
+                if (confirm('¿Limpiar historial de cambios?')) {
+                  localStorage.removeItem('efo_tax_history');
+                  setShowTaxHistory(false);
+                }
+              }}
+            >
+              Limpiar Historial
+            </button>
+          </div>
         </div>
       </div>
     );
@@ -899,16 +1055,6 @@ const PatchCordsAdmin = () => {
                   </div>
                   <div className="form-row">
                     <div className="form-group">
-                      <label>Impuestos:</label>
-                      <input 
-                        type="number" 
-                        step="0.001"
-                        value={editForm.impuestos || ''} 
-                        onChange={(e) => handleEditFormChange('impuestos', e.target.value)}
-                        className="form-input"
-                      />
-                    </div>
-                    <div className="form-group">
                       <label>Margen Operativo:</label>
                       <input 
                         type="number" 
@@ -920,13 +1066,12 @@ const PatchCordsAdmin = () => {
                     </div>
                   </div>
                   <div className="total-preview">
-                    <strong>
-                      Costo Final: $
-                      {((editForm.costo || 0) + 
-                        (editForm.envio || 0) + 
-                        (editForm.impuestos || 0) + 
-                        (editForm.margenOp || 0)).toFixed(4)}
-                    </strong>
+                    <div><strong>Impuestos ({taxPercentage}%): $
+                      {calculateTax(editForm.costo || 0, editForm.envio || 0, editForm.margenOp || 0)}
+                    </strong></div>
+                    <div><strong>Costo Final: $
+                      {calculateFinalCost(editForm.costo || 0, editForm.envio || 0, editForm.margenOp || 0)}
+                    </strong></div>
                   </div>
                 </>
               )}
@@ -1009,6 +1154,8 @@ const PatchCordsAdmin = () => {
     <div className="patch-cords-admin">
       {activeView === 'cotizador' ? <CotizadorPatchCords /> : <AdminView />}
       <EditModal />
+      <TaxHistoryModal />
+      {showAddForm && <AddProductModal />}
     </div>
   );
 };
