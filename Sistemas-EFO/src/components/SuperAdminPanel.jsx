@@ -281,13 +281,6 @@ const SuperAdminPanel = () => {
                         <Eye size={14} />
                         {system.status === SYSTEM_STATUS.ACTIVE ? 'Acceder' : 'No disponible'}
                       </button>
-                      <button 
-                        className="action-btn secondary"
-                        onClick={() => setSelectedSystem(system)}
-                      >
-                        <Settings size={14} />
-                        Configurar
-                      </button>
                     </div>
                   </div>
                 ))}
@@ -385,55 +378,6 @@ const SuperAdminPanel = () => {
           </div>
         )}
       </main>
-
-      {/* Sección de Enlaces para Clientes - Movida al final */}
-      <div className="client-links-super-section">
-        <div className="client-links-super-container">
-          <div className="client-links-super-grid">
-            <div className="client-link-super-card">
-              <div className="link-super-icon">
-                <FileText size={20} />
-              </div>
-              <div className="link-super-content">
-                <h4>Subsistema de Crédito</h4>
-                <div className="link-super-url">
-                  <code>http://localhost:5173/</code>
-                  <button 
-                    className="copy-super-btn"
-                    onClick={() => {
-                      navigator.clipboard.writeText('http://localhost:5173/');
-                      alert('Enlace copiado');
-                    }}
-                  >
-                    📋
-                  </button>
-                </div>
-              </div>
-            </div>
-            
-            <div className="client-link-super-card">
-              <div className="link-super-icon">
-                <Package size={20} />
-              </div>
-              <div className="link-super-content">
-                <h4>Subsistema de Patch Cords</h4>
-                <div className="link-super-url">
-                  <code>http://localhost:5173/patch-cords</code>
-                  <button 
-                    className="copy-super-btn"
-                    onClick={() => {
-                      navigator.clipboard.writeText('http://localhost:5173/patch-cords');
-                      alert('Enlace copiado');
-                    }}
-                  >
-                    📋
-                  </button>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
     </div>
   );
 };

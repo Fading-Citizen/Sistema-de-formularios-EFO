@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Calculator, Check, Package, Plus, Trash2, FileText } from 'lucide-react';
+import logoEFO from '../assets/images/Logoefo.png';
 import './CotizadorPatchCords.css';
 
 const CotizadorPatchCords = () => {
@@ -284,7 +285,7 @@ Para procesar su pedido, contacte a EFO.
       {/* Header con logo EFO */}
       <div className="cotizador-header">
         <div className="logo-section">
-          <img src="/src/assets/images/logo-efo.svg" alt="EFO" className="efo-logo" />
+          <img src={logoEFO} alt="EFO" className="efo-logo" />
           <div className="header-text">
             <h1>Cotizador de Patch Cords</h1>
             <p>Configure su patch cord personalizado y obtenga una cotización instantánea</p>
