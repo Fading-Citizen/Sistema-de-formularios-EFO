@@ -20,25 +20,40 @@ Tu repositorio está listo en: https://github.com/Fading-Citizen/Sistema-de-form
 ### 4. Configurar Variables de Entorno ⚠️ CRÍTICO
 **ANTES de hacer deploy**, en la pantalla de configuración de Vercel:
 
-🚨 **IMPORTANTE**: Si no agregas estas variables, la app se quedará en blanco.
+🚨 **IMPORTANTE**: Si no agregas estas variables, verás el error "VITE_SUPABASE_ANON_KEY is required"
 
-1. **Busca la sección**: "Environment Variables" (está abajo del todo)
-2. **Haz clic en**: "Add New" para agregar variables
-3. **Agrega EXACTAMENTE estas DOS variables**:
+**📍 UBICACIÓN EXACTA**:
+1. Después de hacer clic en "Import" en tu repositorio
+2. En la pantalla de configuración (antes del botón "Deploy")
+3. **Baja hacia abajo** hasta ver "Environment Variables"
+4. Es una sección con fondo gris claro
 
-**Primera variable:**
-- **Name** (copiar exacto): `VITE_SUPABASE_URL`
-- **Value** (copiar exacto): `https://edunmdzcthgtszmpyxmh.supabase.co`
-- **Environment**: All (Production, Preview, and Development)
-- Haz clic en "Add"
+**🔧 CONFIGURACIÓN PASO A PASO**:
 
-**Segunda variable:**
-- **Name** (copiar exacto): `VITE_SUPABASE_ANON_KEY`
-- **Value** (copiar exacto): `eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImVkdW5tZHpjdGhndHN6bXB5eG1oIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTY0OTExMDQsImV4cCI6MjA3MjA2NzEwNH0.TcLzSyf52uRLdTZXhGAcWYDGyxm_skm2ya6w1eqR35s`
-- **Environment**: All (Production, Preview, and Development)
-- Haz clic en "Add"
+**Paso 1 - Primera variable:**
+1. Haz clic en **"Add New"** 
+2. **Name**: `VITE_SUPABASE_URL` (copiar exacto)
+3. **Value**: `https://edunmdzcthgtszmpyxmh.supabase.co` (copiar exacto)
+4. **Environment**: Selecciona **"All Environments"** 
+5. Haz clic en **"Add"**
 
-**✅ Verificación**: Debes ver las DOS variables listadas antes de hacer deploy.
+**Paso 2 - Segunda variable:**
+1. Haz clic en **"Add New"** otra vez
+2. **Name**: `VITE_SUPABASE_ANON_KEY` (copiar exacto)
+3. **Value**: `eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImVkdW5tZHpjdGhndHN6bXB5eG1oIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTY0OTExMDQsImV4cCI6MjA3MjA2NzEwNH0.TcLzSyf52uRLdTZXhGAcWYDGyxm_skm2ya6w1eqR35s` (copiar exacto)
+4. **Environment**: Selecciona **"All Environments"**
+5. Haz clic en **"Add"**
+
+**✅ VERIFICACIÓN FINAL**: 
+Debes ver **2 variables** listadas:
+- ✅ VITE_SUPABASE_URL
+- ✅ VITE_SUPABASE_ANON_KEY
+
+**🚨 SI YA HICISTE DEPLOY SIN VARIABLES**:
+1. Ve a tu proyecto en Vercel Dashboard
+2. **Settings** → **Environment Variables** 
+3. Agrega las variables como se indica arriba
+4. **Deployments** → Encuentra el último deploy → **"Redeploy"**
 
 ### 5. Deploy
 - Haz clic en **"Deploy"**
@@ -57,6 +72,7 @@ https://sistema-de-formularios-efo-xxx.vercel.app
 - `/patch-cords` - Cotizador
 - `/admin/dashboard` - Dashboard admin
 - `/test/conexion` - Test de Supabase
+- `/debug-env.html` - 🔍 **Diagnóstico de variables** (úsala si hay problemas)
 
 ## 🔄 Actualizaciones Futuras
 
