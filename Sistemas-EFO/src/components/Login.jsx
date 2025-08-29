@@ -7,7 +7,7 @@ import './Login.css';
 
 const Login = () => {
   const [credentials, setCredentials] = useState({
-    username: '',
+    email: '',
     password: ''
   });
   const [showPassword, setShowPassword] = useState(false);
@@ -39,7 +39,7 @@ const Login = () => {
     setIsLoading(true);
     setError('');
 
-    const result = await login(credentials.username, credentials.password);
+    const result = await login(credentials.email, credentials.password);
 
     if (result.success) {
       // Si hay una ruta específica solicitada, usar esa; sino, usar la ruta por defecto del rol
@@ -73,16 +73,16 @@ const Login = () => {
 
         <form onSubmit={handleSubmit} className="login-form">
           <div className="form-group">
-            <label htmlFor="username">Usuario</label>
+            <label htmlFor="email">Email</label>
             <input
-              type="text"
-              id="username"
-              name="username"
-              value={credentials.username}
+              type="email"
+              id="email"
+              name="email"
+              value={credentials.email}
               onChange={handleInputChange}
               required
-              placeholder="Ingresa tu usuario"
-              autoComplete="username"
+              placeholder="Ingresa tu email"
+              autoComplete="email"
             />
           </div>
 
@@ -123,33 +123,6 @@ const Login = () => {
             {isLoading ? 'Iniciando sesión...' : 'Iniciar Sesión'}
           </button>
         </form>
-
-        {/* Información de usuarios de prueba */}
-        <div className="demo-users">
-          <h3>Usuarios de Prueba</h3>
-          <div className="user-demo-grid">
-            <div className="user-demo-item">
-              <strong>Super Admin</strong>
-              <code>superadmin / efo2025super</code>
-              <span>Acceso completo</span>
-            </div>
-            <div className="user-demo-item">
-              <strong>Admin Crédito</strong>
-              <code>creditadmin / efo2025credit</code>
-              <span>Solo subsistema de crédito</span>
-            </div>
-            <div className="user-demo-item">
-              <strong>Admin General</strong>
-              <code>generaladmin / efo2025general</code>
-              <span>Subsistemas generales</span>
-            </div>
-            <div className="user-demo-item">
-              <strong>Solo Lectura</strong>
-              <code>viewer / efo2025view</code>
-              <span>Solo visualización</span>
-            </div>
-          </div>
-        </div>
 
         <div className="login-footer">
           <a 

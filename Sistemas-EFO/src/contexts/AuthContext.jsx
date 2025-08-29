@@ -1,4 +1,5 @@
 import React, { createContext, useContext, useState, useEffect } from 'react';
+import { authApi } from '../config/authApi.js';
 
 const AuthContext = createContext();
 
@@ -12,10 +13,10 @@ export const useAuth = () => {
 
 // Definición de roles y permisos
 export const USER_ROLES = {
-  SUPER_ADMIN: 'super_admin',
-  CREDIT_ADMIN: 'credit_admin',
-  GENERAL_ADMIN: 'general_admin',
-  VIEWER: 'viewer'
+  SUPER_ADMIN: 'superadmin',
+  CREDIT_ADMIN: 'admin', 
+  GENERAL_ADMIN: 'admin',
+  VIEWER: 'user'
 };
 
 export const FORM_TYPES = {
@@ -64,54 +65,6 @@ const ROLE_PERMISSIONS = {
   }
 };
 
-// Base de datos simulada de usuarios
-const USERS_DATABASE = [
-  {
-    id: 1,
-    username: 'superadmin',
-    password: 'efo2025super',
-    role: USER_ROLES.SUPER_ADMIN,
-    name: 'Administrador Principal',
-    email: 'admin@efo.co',
-    department: 'Sistemas',
-    active: true,
-    createdAt: '2025-01-01'
-  },
-  {
-    id: 2,
-    username: 'creditadmin',
-    password: 'efo2025credit',
-    role: USER_ROLES.CREDIT_ADMIN,
-    name: 'María Fernández',
-    email: 'credito@efo.co',
-    department: 'Crédito y Cobranza',
-    active: true,
-    createdAt: '2025-01-05'
-  },
-  {
-    id: 3,
-    username: 'generaladmin',
-    password: 'efo2025general',
-    role: USER_ROLES.GENERAL_ADMIN,
-    name: 'Carlos Rodríguez',
-    email: 'general@efo.co',
-    department: 'Administración General',
-    active: true,
-    createdAt: '2025-01-10'
-  },
-  {
-    id: 4,
-    username: 'viewer',
-    password: 'efo2025view',
-    role: USER_ROLES.VIEWER,
-    name: 'Ana López',
-    email: 'viewer@efo.co',
-    department: 'Consulta',
-    active: true,
-    createdAt: '2025-01-15'
-  }
-];
-
 export const AuthProvider = ({ children }) => {
   const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(true);
@@ -120,46 +73,50 @@ export const AuthProvider = ({ children }) => {
     // Verificar si hay una sesión guardada
     const savedUser = localStorage.getItem('efo_admin_user');
     if (savedUser) {
-      const userData = JSON.parse(savedUser);
-      // Verificar que el usuario siga activo
-      const currentUser = USERS_DATABASE.find(u => u.id === userData.id && u.active);
-      if (currentUser) {
+      try {
+        const userData = JSON.parse(savedUser);
         setUser(userData);
-      } else {
+      } catch (error) {
+        console.error('Error parsing saved user:', error);
         localStorage.removeItem('efo_admin_user');
       }
     }
     setLoading(false);
   }, []);
 
-  const login = async (username, password) => {
+  const login = async (email, password) => {
     try {
-      // Buscar usuario en la base de datos
-      const foundUser = USERS_DATABASE.find(
-        user => user.username === username && user.password === password && user.active
-      );
+      console.log('🔐 Iniciando login con:', email);
+      
+      // Usar la API de autenticación con Supabase
+      const result = await authApi.login(email, password);
 
-      if (foundUser) {
+      if (result.success) {
         const userData = {
-          id: foundUser.id,
-          username: foundUser.username,
-          role: foundUser.role,
-          name: foundUser.name,
-          email: foundUser.email,
-          department: foundUser.department,
-          permissions: ROLE_PERMISSIONS[foundUser.role],
+          id: result.user.id,
+          email: result.user.email,
+          role: result.user.role,
+          name: result.user.name,
+          permissions: ROLE_PERMISSIONS[result.user.role] || ROLE_PERMISSIONS[USER_ROLES.VIEWER],
           loginTime: new Date().toISOString()
         };
-        
+
         setUser(userData);
         localStorage.setItem('efo_admin_user', JSON.stringify(userData));
         
+        console.log('✅ Login exitoso:', userData);
         return { success: true, user: userData };
       } else {
-        return { success: false, error: 'Credenciales incorrectas o usuario inactivo' };
+        console.log('❌ Login fallido:', result.error);
+        return { success: false, error: result.error };
       }
+
     } catch (error) {
-      return { success: false, error: 'Error de conexión' };
+      console.error('💥 Error en login:', error);
+      return { 
+        success: false, 
+        error: 'Error de conexión. Verifica tu conexión a internet.' 
+      };
     }
   };
 
@@ -224,8 +181,7 @@ export const AuthProvider = ({ children }) => {
     getUserRoleLabel,
     // Constantes
     USER_ROLES,
-    FORM_TYPES,
-    USERS_DATABASE: user?.permissions?.canManageUsers ? USERS_DATABASE : []
+    FORM_TYPES
   };
 
   return (
