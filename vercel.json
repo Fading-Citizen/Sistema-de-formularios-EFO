@@ -1,0 +1,11 @@
+{
+  "buildCommand": "cd Sistemas-EFO && npm run build",
+  "outputDirectory": "Sistemas-EFO/dist",
+  "installCommand": "cd Sistemas-EFO && npm install",
+  "rewrites": [
+    {
+      "source": "/(.*)",
+      "destination": "/index.html"
+    }
+  ]
+}
