@@ -11,6 +11,8 @@ import CotizadorPatchCords from './components/CotizadorPatchCords'
 import OTDRAdmin from './components/OTDRAdmin'
 import SelectorOTDR from './components/SelectorOTDR'
 import FormularioCredito from './components/FormularioCredito'
+import SupabaseTest from './components/SupabaseTest'
+import ConexionTest from './components/ConexionTest'
 import ProtectedRoute from './components/ProtectedRoute'
 import './App.css'
 
@@ -67,6 +69,12 @@ function App() {
               {/* Selector de OTDR - acceso público */}
               <Route path="/otdr" element={<SelectorOTDR />} />
               <Route path="/selector/otdr" element={<SelectorOTDR />} />
+              
+              {/* Prueba de Supabase - acceso público */}
+              <Route path="/test/supabase" element={<SupabaseTest />} />
+              
+              {/* Test de Conexión Dashboard - acceso público */}
+              <Route path="/test/conexion" element={<ConexionTest />} />
               
               {/* Panel Super Admin - solo super admin */}
               <Route 

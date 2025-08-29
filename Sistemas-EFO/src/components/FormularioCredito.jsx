@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { ArrowLeft, Home } from 'lucide-react';
-import { API_ENDPOINTS } from '../config/api';
+import { api } from '../config/apiHybrid';
 import logoEFO from '../assets/images/Logoefo.png';
 import './FormularioCredito.css';
 
@@ -148,30 +148,56 @@ const FormularioCredito = () => {
     setSubmitMessage('');
 
     try {
-      const formDataToSend = new FormData();
-      
-      // Agregar datos del formulario
-      Object.keys(formData).forEach(key => {
-        formDataToSend.append(key, formData[key]);
-      });
-      
-      // Agregar archivos
-      Object.keys(files).forEach(key => {
-        if (files[key]) {
-          formDataToSend.append(`file_${key}`, files[key]);
-        }
-      });
+      // Preparar datos para Supabase
+      const formularioData = {
+        tipo_formulario: 'credito',
+        nombre_cliente: formData.razon_social || formData.rep_nombres,
+        email_cliente: formData.email_rep,
+        telefono_cliente: formData.telefono_rep || formData.celular_rep,
+        empresa: formData.razon_social,
+        
+        // Datos específicos del formulario de crédito
+        monto_solicitado: parseFloat(formData.valor_activos) || 0,
+        plazo_pago: null, // No especificado en el formulario actual
+        garantias: JSON.stringify({
+          inmueble: {
+            direccion: formData.inmueble_direccion,
+            ciudad: formData.inmueble_ciudad,
+            matricula: formData.matricula,
+            valor_comercial: formData.valor_comercial,
+            valor_hipoteca: formData.valor_hipoteca
+          },
+          vehiculo: {
+            marca: formData.veh_marca,
+            modelo: formData.veh_modelo,
+            placa: formData.veh_placa,
+            prenda_favor: formData.prenda_favor
+          }
+        }),
+        referencias_comerciales: JSON.stringify({
+          entidad_banco: formData.entidad_banco,
+          cuenta_banco: formData.cuenta_banco,
+          sucursal_banco: formData.sucursal_banco,
+          referencia: {
+            nombre: formData.ref_nombre,
+            telefono: formData.ref_telefono
+          }
+        }),
+        estado: 'pendiente',
+        notas: JSON.stringify({
+          datos_completos: formData,
+          archivos_adjuntos: Object.keys(files).filter(key => files[key]).length,
+          asesor: formData.asesor
+        })
+      };
 
-      const response = await fetch(API_ENDPOINTS.SUBMIT_FORM, {
-        method: 'POST',
-        body: formDataToSend
-      });
-
-      const result = await response.json();
+      // Enviar a Supabase usando la API híbrida
+      const result = await api.submitForm(formularioData);
       
-      if (result.success) {
-        setSubmitMessage('Formulario enviado exitosamente. Nos contactaremos pronto.');
-        // Reset form
+      if (result) {
+        setSubmitMessage('✅ Formulario enviado exitosamente. Nos contactaremos pronto.');
+        
+        // Reset form después de envío exitoso
         setFormData({
           producto_tipo: '',
           tercero_tipo: 'persona_juridica',
@@ -258,11 +284,11 @@ const FormularioCredito = () => {
           referencias: null
         });
       } else {
-        setSubmitMessage(result.data?.message || 'Error al enviar el formulario. Intente nuevamente.');
+        setSubmitMessage('❌ Error al enviar el formulario. Intente nuevamente.');
       }
     } catch (error) {
-      console.error('Error:', error);
-      setSubmitMessage('Error de conexión. Verifique su internet e intente nuevamente.');
+      console.error('Error enviando formulario:', error);
+      setSubmitMessage(`❌ Error de conexión: ${error.message}. Verifique su internet e intente nuevamente.`);
     } finally {
       setIsSubmitting(false);
     }

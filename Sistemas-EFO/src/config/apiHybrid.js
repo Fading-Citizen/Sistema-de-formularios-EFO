@@ -4,7 +4,7 @@ import { supabase } from './supabase.js';
 const config = {
   development: {
     API_BASE_URL: 'http://localhost:3002',
-    USE_SUPABASE: false, // Cambiar a true para usar Supabase en desarrollo
+    USE_SUPABASE: true, // Cambiado a true para usar Supabase en desarrollo
     API_ENDPOINTS: {
       SUBMIT_FORM: 'http://localhost:3002/api/forms/submit',
       GET_SUBMISSIONS: 'http://localhost:3002/api/forms/submissions',

@@ -261,9 +261,10 @@ Para procesar su pedido, contacte a EFO.
     setTimeout(() => setCotizacionGenerada(false), 3000);
   };
 
-  const generarCotizacion = () => {
+  const generarCotizacion = async () => {
     setCotizacionGenerada(true);
-    // Aquí se enviaría la cotización por email o se guardaría
+    
+    // Feedback visual
     setTimeout(() => setCotizacionGenerada(false), 3000);
   };
 

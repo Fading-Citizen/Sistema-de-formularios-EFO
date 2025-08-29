@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useAuth } from '../contexts/AuthContext';
 import { useNavigate } from 'react-router-dom';
-import { API_ENDPOINTS } from '../config/api';
+import { api } from '../config/apiHybrid';
 import logoEFO from '../assets/images/Logoefo.png';
 import { 
   LayoutDashboard, 
@@ -59,61 +59,118 @@ const FormularioAdmin = () => {
   const [isUpdatingStatus, setIsUpdatingStatus] = useState(false);
   const [newStatus, setNewStatus] = useState(''); // Para el dropdown
 
-  // Función para obtener datos del backend
+  // Función para obtener datos de Supabase
   const fetchSubmissions = async () => {
     setLoading(true);
     try {
-      // Reducir límite para carga más rápida inicial
-      const url = `${API_ENDPOINTS.GET_SUBMISSIONS}&limit=20&form_type=${filterType !== 'all' ? filterType : ''}`;
+      // Obtener formularios desde Supabase usando la API híbrida
+      const formularios = await api.getSubmissions();
       
-      // Agregar timeout para evitar cuelgues
-      const controller = new AbortController();
-      const timeoutId = setTimeout(() => controller.abort(), 5000); // 5 segundos timeout
-      
-      const response = await fetch(url, { 
-        signal: controller.signal,
-        headers: {
-          'Cache-Control': 'no-cache'
-        }
-      });
-      
-      clearTimeout(timeoutId);
-      
-      if (response.ok) {
-        const result = await response.json();
-        if (result.success) {
-          const realSubmissions = result.data.submissions.map(sub => ({
+      if (formularios && formularios.length > 0) {
+        const realSubmissions = formularios.map(sub => {
+          // Parsear datos JSON almacenados
+          let garantias = {};
+          let referencias = {};
+          let datosCompletos = {};
+          
+          try {
+            garantias = sub.garantias ? JSON.parse(sub.garantias) : {};
+            referencias = sub.referencias_comerciales ? JSON.parse(sub.referencias_comerciales) : {};
+            datosCompletos = sub.notas ? JSON.parse(sub.notas) : {};
+          } catch (e) {
+            console.warn('Error parseando JSON:', e);
+          }
+
+          return {
             id: sub.id,
-            nombre: sub.nombre,
-            email: sub.email,
-            telefono: sub.telefono,
-            tipoCredito: sub.form_data.producto_tipo || 'N/A',
-            tipoFormulario: sub.tipo === 'credito' ? 'Crédito' : 'General',
-            montoSolicitado: sub.form_data.valor_activos || 'N/A',
-            fecha: new Date(sub.fecha).toLocaleDateString(),
+            nombre: sub.nombre_cliente,
+            email: sub.email_cliente,
+            telefono: sub.telefono_cliente,
+            tipoCredito: 'Crédito Empresarial',
+            tipoFormulario: sub.tipo_formulario === 'credito' ? 'Crédito' : 'General',
+            montoSolicitado: sub.monto_solicitado || 'N/A',
+            fecha: new Date(sub.created_at).toLocaleDateString(),
             estado: sub.estado.charAt(0).toUpperCase() + sub.estado.slice(1),
             empresa: sub.empresa,
-            ingresos: sub.form_data.ingresos_operacionales || 'N/A',
+            ingresos: 'N/A', // No disponible en el nuevo esquema
+            
+            // Datos adicionales para el modal
+            producto_tipo: 'Crédito Empresarial',
+            tercero_tipo: 'persona_juridica',
+            identificacion_tipo: 'NIT',
+            identificacion_num: datosCompletos.datos_completos?.identificacion_num || 'N/A',
+            razon_social: sub.empresa,
+            rep_ident_tipo: 'CC',
+            rep_ident_num: datosCompletos.datos_completos?.rep_ident_num || 'N/A',
+            rep_nombres: sub.nombre_cliente,
+            direccion_oficina: datosCompletos.datos_completos?.direccion_oficina || 'N/A',
+            departamento_oficina: datosCompletos.datos_completos?.departamento_oficina || 'N/A',
+            ciudad_oficina: datosCompletos.datos_completos?.ciudad_oficina || 'N/A',
+            telefono_oficina: datosCompletos.datos_completos?.telefono_oficina || 'N/A',
+            direccion_sucursal: datosCompletos.datos_completos?.direccion_sucursal || 'N/A',
+            departamento_sucursal: datosCompletos.datos_completos?.departamento_sucursal || 'N/A',
+            ciudad_sucursal: datosCompletos.datos_completos?.ciudad_sucursal || 'N/A',
+            telefono_sucursal: datosCompletos.datos_completos?.telefono_sucursal || 'N/A',
+            email_rep: sub.email_cliente,
+            ciudad_rep: datosCompletos.datos_completos?.ciudad_rep || 'N/A',
+            departamento_rep: datosCompletos.datos_completos?.departamento_rep || 'N/A',
+            telefono_rep: sub.telefono_cliente,
+            celular_rep: datosCompletos.datos_completos?.celular_rep || 'N/A',
+            sector: datosCompletos.datos_completos?.sector || 'N/A',
+            tipo_actividad: datosCompletos.datos_completos?.tipo_actividad || 'N/A',
+            desc_actividad: datosCompletos.datos_completos?.desc_actividad || 'N/A',
+            tipo_empresa: datosCompletos.datos_completos?.tipo_empresa || 'Privada',
+            valor_activos: sub.monto_solicitado || 'N/A',
+            valor_pasivos: datosCompletos.datos_completos?.valor_pasivos || 'N/A',
+            ingresos_operacionales: datosCompletos.datos_completos?.ingresos_operacionales || 'N/A',
+            
+            // Garantías
+            inmueble_direccion: garantias.inmueble?.direccion || 'N/A',
+            inmueble_ciudad: garantias.inmueble?.ciudad || 'N/A',
+            matricula: garantias.inmueble?.matricula || 'N/A',
+            valor_comercial: garantias.inmueble?.valor_comercial || 'N/A',
+            valor_hipoteca: garantias.inmueble?.valor_hipoteca || 'N/A',
+            veh_marca: garantias.vehiculo?.marca || 'N/A',
+            veh_modelo: garantias.vehiculo?.modelo || 'N/A',
+            veh_placa: garantias.vehiculo?.placa || 'N/A',
+            prenda_favor: garantias.vehiculo?.prenda_favor || 'N/A',
+            
+            // Referencias
+            entidad_banco: referencias.entidad_banco || 'N/A',
+            cuenta_banco: referencias.cuenta_banco || 'N/A',
+            sucursal_banco: referencias.sucursal_banco || 'N/A',
+            ref_nombre: referencias.referencia?.nombre || 'N/A',
+            ref_telefono: referencias.referencia?.telefono || 'N/A',
+            
+            // Datos adicionales
+            asesor: datosCompletos.asesor || 'N/A',
+            archivos_adjuntos: datosCompletos.archivos_adjuntos || 0,
+            
             rawData: sub
-          }));
-          
-          setSubmissions(realSubmissions);
-          setStats({
-            total: result.data.total,
-            thisMonth: realSubmissions.length,
-            pending: realSubmissions.filter(s => s.estado === 'Nuevo' || s.estado === 'Pendiente').length,
-            completed: realSubmissions.filter(s => s.estado === 'Completado').length
-          });
-          setLoading(false);
-          return;
-        }
+          };
+        });
+        
+        // Filtrar por tipo de formulario si es necesario
+        const filteredSubmissions = filterType === 'all' 
+          ? realSubmissions 
+          : realSubmissions.filter(sub => sub.tipoFormulario.toLowerCase().includes(filterType));
+        
+        setSubmissions(filteredSubmissions);
+        setStats({
+          total: filteredSubmissions.length,
+          thisMonth: filteredSubmissions.length,
+          pending: filteredSubmissions.filter(s => s.estado === 'Pendiente' || s.estado === 'Nuevo').length,
+          completed: filteredSubmissions.filter(s => s.estado === 'Completado').length
+        });
+        setLoading(false);
+        return;
       }
       
-      // Fallback a datos mock si no hay backend disponible
+      // Fallback a datos mock si no hay datos en Supabase
       useMockData();
       
     } catch (error) {
-      console.error('Error fetching submissions:', error);
+      console.error('Error fetching submissions from Supabase:', error);
       useMockData();
     }
   };
@@ -430,6 +487,11 @@ const FormularioAdmin = () => {
     setIsUpdatingStatus(true);
     
     try {
+      // Actualizar en Supabase usando la API híbrida
+      await api.updateSubmission(submissionId, { 
+        estado: newStatus.toLowerCase() 
+      });
+      
       // Actualizar en la lista activa
       setSubmissions(prev => prev.map(sub => 
         sub.id === submissionId ? { ...sub, estado: newStatus } : sub
@@ -440,13 +502,11 @@ const FormularioAdmin = () => {
         setSelectedSubmission({ ...selectedSubmission, estado: newStatus });
       }
       
-      // Aquí podrías hacer la llamada al backend para persistir el cambio
-      // await updateStatusInBackend(submissionId, newStatus);
-      
-      alert('Estado actualizado correctamente');
+      alert('✅ Estado actualizado correctamente en Supabase');
       setNewStatus(''); // Limpiar el dropdown
     } catch (error) {
-      alert('Error al actualizar el estado');
+      console.error('Error actualizando estado:', error);
+      alert(`❌ Error al actualizar el estado: ${error.message}`);
     }
     
     setIsUpdatingStatus(false);
