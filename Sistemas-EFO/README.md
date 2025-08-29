@@ -1,18 +1,48 @@
-# Sistemas EFO - Plataforma Integrada
+# 🏢 Sistema EFO - Formularios y Cotizador
 
-Esta es una plataforma de gestión de sistemas para ELECTROL FIBRA ÓPTICA SAS, desarrollada con React + Vite.
+Sistema integral de gestión de formularios de crédito y cotizador de patch cords para **Electrol Fibra Óptica SAS**. Incluye dashboard administrativo, sistema de autenticación y base de datos en la nube con Supabase.
 
-## 🌟 Subsistemas Incluidos
+## 🌟 Características
 
-### 📋 Subsistema de Crédito
-- Formulario de solicitud de crédito completo
-- Validación de datos en tiempo real
-- Envío automático de documentos
+### � **Formularios de Crédito**
+- Formulario completo de solicitud de crédito empresarial
+- Validación en tiempo real
+- Almacenamiento seguro en Supabase
+- Dashboard administrativo para gestión
 
-### 🔌 Subsistema de Patch Cords
-- Configurador de patch cords personalizados
-- Cotizador automático de precios
-- Panel administrativo para gestión de productos
+### � **Cotizador de Patch Cords**
+- Configurador interactivo de patch cords
+- Cálculo automático de precios
+- Generación de cotizaciones en PDF
+- Base de datos de productos actualizable
+
+### 👥 **Panel Administrativo**
+- Dashboard con métricas y estadísticas
+- Gestión de formularios recibidos
+- Actualización de estados
+- Sistema de roles y permisos
+
+### 🛠️ **Selector OTDR**
+- Catálogo de equipos OTDR
+- Filtros avanzados de búsqueda
+- Especificaciones técnicas detalladas
+
+## 🚀 Tecnologías
+
+- **Frontend**: React 18 + Vite
+- **Base de Datos**: Supabase (PostgreSQL)
+- **Hosting**: Vercel
+- **Estilos**: CSS3 + Variables CSS
+- **Íconos**: Lucide React
+
+## 🌐 URLs de Producción
+
+- **🏠 Página Principal**: https://sistema-de-formularios-efo.vercel.app
+- **📋 Formulario de Crédito**: /form/credito-efo
+- **💰 Cotizador Patch Cords**: /patch-cords
+- **🔍 Selector OTDR**: /selector/otdr
+- **👨‍💼 Dashboard Admin**: /admin/dashboard
+- **🧪 Test de Conexión**: /test/conexion
 
 ## Instalación
 
