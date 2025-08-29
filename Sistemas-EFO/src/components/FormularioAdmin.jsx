@@ -63,8 +63,16 @@ const FormularioAdmin = () => {
   const fetchSubmissions = async () => {
     setLoading(true);
     try {
-      // Obtener formularios desde Supabase usando la API híbrida
-      const formularios = await api.getSubmissions();
+      console.log('📊 Cargando formularios...');
+      
+      // Obtener formularios activos y archivados en paralelo
+      const [formularios, archivedFormularios] = await Promise.all([
+        api.getSubmissions(),
+        api.getArchivedSubmissions()
+      ]);
+      
+      console.log('📋 Formularios activos:', formularios?.length || 0);
+      console.log('📦 Formularios archivados:', archivedFormularios?.length || 0);
       
       if (formularios && formularios.length > 0) {
         const realSubmissions = formularios.map(sub => {
@@ -149,6 +157,43 @@ const FormularioAdmin = () => {
             rawData: sub
           };
         });
+        
+        // Procesar formularios archivados
+        const realArchivedSubmissions = archivedFormularios?.map(sub => {
+          // Mismo procesamiento que los formularios activos
+          let garantias = {};
+          let referencias = {};
+          let datosCompletos = {};
+          
+          try {
+            garantias = sub.garantias ? JSON.parse(sub.garantias) : {};
+            referencias = sub.referencias_comerciales ? JSON.parse(sub.referencias_comerciales) : {};
+            datosCompletos = sub.notas ? JSON.parse(sub.notas) : {};
+          } catch (e) {
+            console.warn('Error parseando JSON archived:', e);
+          }
+
+          return {
+            id: sub.id,
+            nombre: sub.nombre_cliente,
+            email: sub.email_cliente,
+            telefono: sub.telefono_cliente,
+            tipoCredito: 'Crédito Empresarial',
+            tipoFormulario: sub.tipo_formulario === 'credito' ? 'Crédito' : 'General',
+            fecha: new Date(sub.created_at).toLocaleDateString(),
+            estado: sub.estado.charAt(0).toUpperCase() + sub.estado.slice(1),
+            empresa: sub.empresa,
+            ingresos: 'N/A',
+            archived: true,
+            archived_at: sub.archived_at,
+            rawData: sub
+          };
+        }) || [];
+        
+        console.log('✅ Formularios procesados:', realSubmissions.length, 'archivados:', realArchivedSubmissions.length);
+        
+        // Actualizar estado con formularios archivados
+        setArchivedSubmissions(realArchivedSubmissions);
         
         // Filtrar por tipo de formulario si es necesario
         const filteredSubmissions = filterType === 'all' 
@@ -455,25 +500,67 @@ const FormularioAdmin = () => {
   }, [filterType]);
 
   // Funciones de archivado
-  const archiveSubmission = (submissionId) => {
-    const submissionToArchive = submissions.find(sub => sub.id === submissionId);
-    if (submissionToArchive) {
-      setArchivedSubmissions(prev => [...prev, submissionToArchive]);
-      setSubmissions(prev => prev.filter(sub => sub.id !== submissionId));
+  const archiveSubmission = async (submissionId) => {
+    try {
+      console.log('📦 Archivando formulario:', submissionId);
+      
+      // Archivar en la base de datos
+      await api.archiveSubmission(submissionId);
+      
+      // Actualizar estado local
+      const submissionToArchive = submissions.find(sub => sub.id === submissionId);
+      if (submissionToArchive) {
+        setArchivedSubmissions(prev => [...prev, { ...submissionToArchive, archived: true }]);
+        setSubmissions(prev => prev.filter(sub => sub.id !== submissionId));
+      }
+      
+      console.log('✅ Formulario archivado exitosamente');
+    } catch (error) {
+      console.error('❌ Error archivando formulario:', error);
+      alert('Error al archivar el formulario. Por favor, inténtalo de nuevo.');
     }
   };
 
-  const restoreSubmission = (submissionId) => {
-    const submissionToRestore = archivedSubmissions.find(sub => sub.id === submissionId);
-    if (submissionToRestore) {
-      setSubmissions(prev => [...prev, submissionToRestore]);
-      setArchivedSubmissions(prev => prev.filter(sub => sub.id !== submissionId));
+  const restoreSubmission = async (submissionId) => {
+    try {
+      console.log('🔄 Restaurando formulario:', submissionId);
+      
+      // Restaurar en la base de datos
+      await api.restoreSubmission(submissionId);
+      
+      // Actualizar estado local
+      const submissionToRestore = archivedSubmissions.find(sub => sub.id === submissionId);
+      if (submissionToRestore) {
+        setSubmissions(prev => [...prev, { ...submissionToRestore, archived: false }]);
+        setArchivedSubmissions(prev => prev.filter(sub => sub.id !== submissionId));
+      }
+      
+      console.log('✅ Formulario restaurado exitosamente');
+    } catch (error) {
+      console.error('❌ Error restaurando formulario:', error);
+      alert('Error al restaurar el formulario. Por favor, inténtalo de nuevo.');
     }
   };
 
-  const deleteSubmission = (submissionId) => {
+  const deleteSubmission = async (submissionId) => {
     if (window.confirm('¿Estás seguro de que quieres eliminar permanentemente este formulario?')) {
-      setArchivedSubmissions(prev => prev.filter(sub => sub.id !== submissionId));
+      try {
+        console.log('🗑️ Eliminando formulario:', submissionId);
+        
+        // Eliminar de la base de datos
+        await api.deleteSubmission(submissionId);
+        
+        // Actualizar estado local - eliminar de ambas listas
+        setArchivedSubmissions(prev => prev.filter(sub => sub.id !== submissionId));
+        setSubmissions(prev => prev.filter(sub => sub.id !== submissionId));
+        
+        console.log('✅ Formulario eliminado exitosamente');
+        alert('✅ Formulario eliminado correctamente');
+        
+      } catch (error) {
+        console.error('❌ Error eliminando formulario:', error);
+        alert('❌ Error al eliminar el formulario: ' + error.message);
+      }
     }
   };
 

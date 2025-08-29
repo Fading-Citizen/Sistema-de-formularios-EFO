@@ -13,6 +13,7 @@ import SelectorOTDR from './components/SelectorOTDR'
 import FormularioCredito from './components/FormularioCredito'
 import SupabaseTest from './components/SupabaseTest'
 import ConexionTest from './components/ConexionTest'
+import CrudTest from './components/CrudTest'
 import ProtectedRoute from './components/ProtectedRoute'
 import './App.css'
 
@@ -75,6 +76,9 @@ function App() {
               
               {/* Test de Conexión Dashboard - acceso público */}
               <Route path="/test/conexion" element={<ConexionTest />} />
+              
+              {/* Test CRUD - acceso público */}
+              <Route path="/test/crud" element={<CrudTest />} />
               
               {/* Panel Super Admin - solo super admin */}
               <Route 

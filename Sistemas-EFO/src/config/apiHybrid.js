@@ -53,6 +53,7 @@ export const api = {
       const { data, error } = await supabase
         .from('formularios')
         .select('*')
+        .eq('archived', false)
         .order('created_at', { ascending: false });
       
       if (error) throw error;
@@ -60,6 +61,60 @@ export const api = {
     } else {
       const response = await fetch(currentConfig.API_ENDPOINTS.GET_SUBMISSIONS);
       return response.json();
+    }
+  },
+
+  async getArchivedSubmissions() {
+    if (currentConfig.USE_SUPABASE) {
+      const { data, error } = await supabase
+        .from('formularios')
+        .select('*')
+        .eq('archived', true)
+        .order('archived_at', { ascending: false });
+      
+      if (error) throw error;
+      return data;
+    } else {
+      // Para API tradicional, retornar array vacío o implementar endpoint
+      return [];
+    }
+  },
+
+  async archiveSubmission(id) {
+    if (currentConfig.USE_SUPABASE) {
+      const { data, error } = await supabase
+        .from('formularios')
+        .update({ 
+          archived: true, 
+          archived_at: new Date().toISOString() 
+        })
+        .eq('id', id)
+        .select();
+      
+      if (error) throw error;
+      return data[0];
+    } else {
+      // Para API tradicional, implementar endpoint de archivado
+      throw new Error('Archivado no implementado para API tradicional');
+    }
+  },
+
+  async restoreSubmission(id) {
+    if (currentConfig.USE_SUPABASE) {
+      const { data, error } = await supabase
+        .from('formularios')
+        .update({ 
+          archived: false, 
+          archived_at: null 
+        })
+        .eq('id', id)
+        .select();
+      
+      if (error) throw error;
+      return data[0];
+    } else {
+      // Para API tradicional, implementar endpoint de restauración
+      throw new Error('Restauración no implementada para API tradicional');
     }
   },
 

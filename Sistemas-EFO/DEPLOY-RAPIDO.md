@@ -72,6 +72,7 @@ https://sistema-de-formularios-efo-xxx.vercel.app
 - `/patch-cords` - Cotizador
 - `/admin/dashboard` - Dashboard admin
 - `/test/conexion` - Test de Supabase
+- `/test/crud` - 🧪 **Test CRUD completo** (crear, leer, actualizar, archivar, eliminar)
 - `/debug-env.html` - 🔍 **Diagnóstico de variables** (úsala si hay problemas)
 
 ## 🔄 Actualizaciones Futuras
