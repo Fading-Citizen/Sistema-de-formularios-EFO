@@ -20,14 +20,21 @@ const Login = () => {
 
   // Función para determinar la ruta de redirección según el rol
   const getDefaultRouteForRole = (role) => {
+    console.log('🎯 Determinando ruta para rol:', role);
+    
     switch (role) {
+      case 'superadmin':
       case USER_ROLES.SUPER_ADMIN:
         return '/admin/super-admin';
+      case 'admin':
       case USER_ROLES.CREDIT_ADMIN:
       case USER_ROLES.GENERAL_ADMIN:
+        return '/admin/dashboard';
+      case 'user':
       case USER_ROLES.VIEWER:
         return '/admin/dashboard';
       default:
+        console.log('⚠️ Rol no reconocido, usando dashboard por defecto');
         return '/admin/dashboard';
     }
   };
@@ -39,13 +46,20 @@ const Login = () => {
     setIsLoading(true);
     setError('');
 
+    console.log('📝 Enviando formulario de login...');
     const result = await login(credentials.email, credentials.password);
+    console.log('📋 Resultado del login:', result);
 
     if (result.success) {
+      console.log('✅ Login exitoso, usuario:', result.user);
+      
       // Si hay una ruta específica solicitada, usar esa; sino, usar la ruta por defecto del rol
       const redirectTo = from || getDefaultRouteForRole(result.user.role);
+      console.log('🚀 Redirigiendo a:', redirectTo);
+      
       navigate(redirectTo, { replace: true });
     } else {
+      console.log('❌ Login fallido:', result.error);
       setError(result.error);
     }
 

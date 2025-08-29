@@ -36,7 +36,7 @@ function App() {
               <Route 
                 path="/admin/dashboard" 
                 element={
-                  <ProtectedRoute allowedRoles={['credit', 'general', 'viewer', 'super_admin']}>
+                  <ProtectedRoute allowedRoles={['admin', 'user', 'superadmin']}>
                     <FormularioAdmin />
                   </ProtectedRoute>
                 }
@@ -46,7 +46,7 @@ function App() {
               <Route 
                 path="/admin/patch-cords" 
                 element={
-                  <ProtectedRoute allowedRoles={['super_admin']}>
+                  <ProtectedRoute allowedRoles={['superadmin']}>
                     <PatchCordsAdmin />
                   </ProtectedRoute>
                 }
@@ -56,7 +56,7 @@ function App() {
               <Route 
                 path="/admin/otdr" 
                 element={
-                  <ProtectedRoute allowedRoles={['super_admin']}>
+                  <ProtectedRoute allowedRoles={['superadmin']}>
                     <OTDRAdmin />
                   </ProtectedRoute>
                 }
@@ -80,7 +80,7 @@ function App() {
               <Route 
                 path="/admin/super-admin" 
                 element={
-                  <ProtectedRoute allowedRoles={['super_admin']}>
+                  <ProtectedRoute allowedRoles={['superadmin']}>
                     <SuperAdminPanel />
                   </ProtectedRoute>
                 }

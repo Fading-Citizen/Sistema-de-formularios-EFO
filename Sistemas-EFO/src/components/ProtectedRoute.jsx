@@ -35,14 +35,15 @@ const ProtectedRoute = ({ children, requiredRole = null, allowedRoles = null }) 
   };
 
   if (!hasRequiredRole()) {
+    console.log('🚫 Acceso denegado. Usuario:', user.role, 'Roles permitidos:', allowedRoles);
+    
     // Redirigir según el rol del usuario
     const getRedirectPath = () => {
       switch (user.role) {
-        case 'super_admin':
+        case 'superadmin':
           return '/admin/super-admin';
-        case 'credit_admin':
-        case 'general_admin':
-        case 'viewer':
+        case 'admin':
+        case 'user':
           return '/admin/dashboard';
         default:
           return '/admin/login';
@@ -52,6 +53,7 @@ const ProtectedRoute = ({ children, requiredRole = null, allowedRoles = null }) 
     return <Navigate to={getRedirectPath()} replace />;
   }
 
+  console.log('✅ Acceso permitido. Usuario:', user.role, 'Ruta:', location.pathname);
   return children;
 };
 

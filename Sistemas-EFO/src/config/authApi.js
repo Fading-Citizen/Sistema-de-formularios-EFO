@@ -7,13 +7,15 @@ export const authApi = {
     try {
       console.log('🔐 Intentando login con:', email);
       
-      // Buscar usuario en la base de datos
+      // Paso 1: Buscar usuario en la base de datos
       const { data: user, error } = await supabase
         .from('users')
         .select('*')
         .eq('email', email)
         .eq('active', true)
         .single();
+
+      console.log('🔍 Resultado búsqueda usuario:', { user, error });
 
       if (error || !user) {
         console.log('❌ Usuario no encontrado:', error);
@@ -23,19 +25,37 @@ export const authApi = {
         };
       }
 
-      // Verificar contraseña usando pgcrypto
-      const { data: authResult, error: authError } = await supabase
-        .rpc('verify_password', {
-          email: email,
-          password: password
-        });
+      console.log('✅ Usuario encontrado:', user.email, 'Role:', user.role);
 
+      // Paso 2: Verificar contraseña usando SQL directo
+      const { data: authResult, error: authError } = await supabase
+        .from('users')
+        .select('id, email, name, role')
+        .eq('email', email)
+        .eq('password_hash', supabase.rpc('crypt', { password, salt: user.password_hash }))
+        .single();
+
+      console.log('🔍 Resultado verificación contraseña:', { authResult, authError });
+
+      // Si la verificación anterior falla, probemos con la función
       if (authError || !authResult) {
-        console.log('❌ Contraseña incorrecta:', authError);
-        return { 
-          success: false, 
-          error: 'Credenciales incorrectas' 
-        };
+        console.log('🔄 Intentando con verify_password function...');
+        
+        const { data: funcResult, error: funcError } = await supabase
+          .rpc('verify_password', {
+            email: email,
+            password: password
+          });
+
+        console.log('🔍 Resultado verify_password:', { funcResult, funcError });
+
+        if (funcError || !funcResult) {
+          console.log('❌ Contraseña incorrecta:', funcError);
+          return { 
+            success: false, 
+            error: 'Credenciales incorrectas - ' + (funcError?.message || 'Contraseña inválida')
+          };
+        }
       }
 
       console.log('✅ Login exitoso para:', user.email);
@@ -56,7 +76,7 @@ export const authApi = {
       console.error('💥 Error en login:', error);
       return { 
         success: false, 
-        error: 'Error interno del servidor' 
+        error: 'Error interno del servidor: ' + error.message 
       };
     }
   },
