@@ -8,6 +8,8 @@ import FormularioAdmin from './components/FormularioAdmin'
 import SuperAdminPanel from './components/SuperAdminPanel'
 import PatchCordsAdmin from './components/PatchCordsAdmin'
 import CotizadorPatchCords from './components/CotizadorPatchCords'
+import OTDRAdmin from './components/OTDRAdmin'
+import SelectorOTDR from './components/SelectorOTDR'
 import FormularioCredito from './components/FormularioCredito'
 import ProtectedRoute from './components/ProtectedRoute'
 import './App.css'
@@ -48,9 +50,23 @@ function App() {
                 }
               />
               
+              {/* Panel de OTDR - solo para super admin */}
+              <Route 
+                path="/admin/otdr" 
+                element={
+                  <ProtectedRoute allowedRoles={['super_admin']}>
+                    <OTDRAdmin />
+                  </ProtectedRoute>
+                }
+              />
+              
               {/* Cotizador de Patch Cords - acceso público */}
               <Route path="/patch-cords" element={<CotizadorPatchCords />} />
               <Route path="/cotizador/patch-cords" element={<CotizadorPatchCords />} />
+              
+              {/* Selector de OTDR - acceso público */}
+              <Route path="/otdr" element={<SelectorOTDR />} />
+              <Route path="/selector/otdr" element={<SelectorOTDR />} />
               
               {/* Panel Super Admin - solo super admin */}
               <Route 

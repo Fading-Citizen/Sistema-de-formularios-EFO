@@ -10,7 +10,8 @@ import {
   Phone,
   Mail,
   MapPin,
-  Globe
+  Globe,
+  Search
 } from 'lucide-react';
 import './HomePage.css';
 
@@ -115,6 +116,29 @@ const HomePage = () => {
                   className="service-btn secondary"
                 >
                   Configurar
+                  <ArrowRight size={16} />
+                </button>
+              </div>
+            </div>
+
+            {/* Selector de OTDR */}
+            <div className="service-card">
+              <div className="service-icon">
+                <Search size={48} />
+              </div>
+              <div className="service-content">
+                <h4>Selector de OTDR</h4>
+                <p>Herramienta inteligente para seleccionar el equipo OTDR ideal según tus necesidades</p>
+                <ul>
+                  <li>Filtros por tipo de fibra</li>
+                  <li>Comparación de rangos</li>
+                  <li>Especificaciones técnicas</li>
+                </ul>
+                <button 
+                  onClick={() => navigate('/otdr')}
+                  className="service-btn tertiary"
+                >
+                  Seleccionar
                   <ArrowRight size={16} />
                 </button>
               </div>

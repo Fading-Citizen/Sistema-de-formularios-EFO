@@ -1,0 +1,46 @@
+/* src/components/Shared.css */
+
+.system-header {
+  background: linear-gradient(135deg, var(--efo-primary) 0%, var(--efo-primary-dark) 100%);
+  color: white;
+  padding: 2rem;
+  border-radius: 12px;
+  margin-bottom: 2rem;
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+  gap: 1.5rem;
+  box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+  max-width: 1200px;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.system-header .efo-logo {
+  height: 60px;
+  width: 60px;
+  background-color: white;
+  border-radius: 50%;
+  padding: 8px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+  object-fit: contain;
+}
+
+.system-header .header-text {
+  flex: 1;
+  text-align: left;
+}
+
+.system-header .header-text h1 {
+  margin: 0;
+  font-size: 2rem;
+  font-weight: 700;
+  letter-spacing: -0.5px;
+  margin-bottom: 0.25rem;
+}
+
+.system-header .header-text p {
+  margin: 0;
+  font-size: 1rem;
+  opacity: 0.9;
+}

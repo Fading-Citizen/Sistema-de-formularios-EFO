@@ -107,33 +107,40 @@ const SYSTEMS_DATABASE = [
   },
   {
     id: 3,
-    name: "OTDR'S EFO",
+    name: "Selector de OTDR - Sistemas EFO",
     type: SYSTEM_TYPES.INVENTORY,
-    description: 'Gestión de equipos OTDR y análisis de fibra óptica',
-    status: SYSTEM_STATUS.DEVELOPMENT,
-    version: '0.5.0',
-    url: '/otdr/dashboard',
-    icon: 'Package',
+    description: 'Gestión y selector inteligente de equipos OTDR',
+    status: SYSTEM_STATUS.ACTIVE,
+    version: '1.0.0',
+    url: '/admin/otdr',
+    icon: 'Search',
     color: '#059669',
-    admins: [1],
+    admins: [1, 2],
     dashboards: [
       {
         id: 301,
-        name: "Dashboard OTDR'S",
+        name: "Panel OTDR Admin",
         type: DASHBOARD_TYPES.OPERATIONAL,
-        url: '/otdr/equipment',
-        description: 'Control de equipos OTDR y mediciones'
+        url: '/admin/otdr',
+        description: 'Gestión de equipos OTDR y especificaciones'
+      },
+      {
+        id: 302,
+        name: "Selector Público",
+        type: DASHBOARD_TYPES.OPERATIONAL,
+        url: '/otdr',
+        description: 'Selector público de equipos OTDR'
       }
     ],
     metrics: {
-      totalUsers: 1,
-      equipmentOTDR: 0,
-      monthlyGrowth: 'N/A',
-      uptime: 'N/A'
+      totalUsers: 2,
+      equipmentOTDR: 18,
+      monthlyGrowth: '+8%',
+      uptime: '99.8%'
     },
-    permissions: ['view_equipment', 'edit_otdr', 'manage_measurements', 'generate_reports'],
+    permissions: ['view_equipment', 'edit_otdr', 'manage_specifications', 'generate_reports'],
     createdAt: '2025-01-12',
-    lastUpdated: '2025-01-15'
+    lastUpdated: '2025-01-25'
   }
 ];
 

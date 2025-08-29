@@ -247,16 +247,6 @@ const SuperAdminPanel = () => {
               <div className="systems-grid">
                 {systems.map(system => (
                   <div key={system.id} className={`system-card ${system.status}`}>
-                    <div className="system-header">
-                      <div className="system-icon" style={{ backgroundColor: system.color }}>
-                        {getSystemIcon(system.icon)}
-                      </div>
-                      <div className="system-status">
-                        {getStatusIcon(system.status)}
-                        <span>{getStatusLabel(system.status)}</span>
-                      </div>
-                    </div>
-                    
                     <div className="system-content">
                       <h3>{system.name}</h3>
                       <p>{system.description}</p>

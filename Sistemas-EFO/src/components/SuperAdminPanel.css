@@ -345,50 +345,6 @@
   opacity: 0.6;
 }
 
-.system-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-bottom: 1rem;
-}
-
-.system-icon {
-  width: 50px;
-  height: 50px;
-  border-radius: 12px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  color: white;
-}
-
-.system-status {
-  display: flex;
-  align-items: center;
-  gap: 0.5rem;
-  font-size: 0.75rem;
-  font-weight: 600;
-  padding: 0.25rem 0.75rem;
-  border-radius: 20px;
-  background: rgba(0, 0, 0, 0.05);
-}
-
-.status-icon.active {
-  color: var(--efo-primary);
-}
-
-.status-icon.inactive {
-  color: var(--efo-secondary);
-}
-
-.status-icon.maintenance {
-  color: var(--efo-emphasis);
-}
-
-.status-icon.development {
-  color: var(--efo-accent);
-}
-
 .system-content h3 {
   margin: 0 0 0.5rem 0;
   color: var(--efo-primary);

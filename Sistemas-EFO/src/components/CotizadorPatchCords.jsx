@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { Calculator, Check, Package, Plus, Trash2, FileText } from 'lucide-react';
 import logoEFO from '../assets/images/Logoefo.png';
 import './CotizadorPatchCords.css';
+import './Shared.css';
 
 const CotizadorPatchCords = () => {
   const [configuracion, setConfiguracion] = useState({
@@ -11,8 +12,7 @@ const CotizadorPatchCords = () => {
     tipoFibra: '',
     longitud: '',
     tipoJacket: '',
-    cantidad: 1,
-    extras: []
+    cantidad: 1
   });
 
   const [patchCordsList, setPatchCordsList] = useState([]);
@@ -113,13 +113,13 @@ const CotizadorPatchCords = () => {
 
   const calcularPrecios = () => {
     if (!configuracion.tipoConector1 || !configuracion.tipoConector2 || 
-        !configuracion.lineaProducto || !configuracion.tipoFibra || 
+        !configuracion.tipoFibra || 
         !configuracion.longitud || !configuracion.tipoJacket) {
       return;
     }
 
     const tipoFibraKey = configuracion.tipoFibra === 'SM' ? 'SM' : 'MM';
-    const lineaKey = configuracion.lineaProducto;
+    const lineaKey = 'Value'; // Siempre usar Value
     
     const keyConector1 = `${configuracion.tipoConector1}_${tipoFibraKey}_${lineaKey}`;
     const keyConector2 = `${configuracion.tipoConector2}_${tipoFibraKey}_${lineaKey}`;
@@ -147,10 +147,8 @@ const CotizadorPatchCords = () => {
     
     const costoConectores = (conector1.costo + conector2.costo) * cantidad;
     const costoCable = cable.costoPorMetro * longitud * cantidad;
-    const costoExtras = configuracion.extras.reduce((total, extra) => 
-      total + (productDatabase.extras[extra]?.costo || 0), 0) * cantidad;
     
-    const costoTotal = costoConectores + costoCable + costoExtras;
+    const costoTotal = costoConectores + costoCable;
     const envio = costoTotal * 0.10;
     const impuestos = costoTotal * 0.13;
     const margenOperativo = costoTotal * 0.15;
@@ -176,15 +174,6 @@ const CotizadorPatchCords = () => {
     }));
   };
 
-  const toggleExtra = (extraKey) => {
-    setConfiguracion(prev => ({
-      ...prev,
-      extras: prev.extras.includes(extraKey) 
-        ? prev.extras.filter(e => e !== extraKey)
-        : [...prev.extras, extraKey]
-    }));
-  };
-
   // Funciones para manejar múltiples patch cords
   const agregarPatchCord = () => {
     if (isConfigurationComplete()) {
@@ -203,8 +192,7 @@ const CotizadorPatchCords = () => {
         tipoFibra: '',
         longitud: '',
         tipoJacket: '',
-        cantidad: 1,
-        extras: []
+        cantidad: 1
       });
     }
   };
@@ -242,7 +230,6 @@ PRODUCTOS COTIZADOS:
     patchCordsList.forEach((item, index) => {
       contenidoPDF += `
 ${index + 1}. ${item.configuracion.tipoConector1} a ${item.configuracion.tipoConector2}
-   - Línea: ${item.configuracion.lineaProducto}
    - Fibra: ${item.configuracion.tipoFibra}
    - Longitud: ${item.configuracion.longitud}m
    - Jacket: ${item.configuracion.tipoJacket}
@@ -282,17 +269,14 @@ Para procesar su pedido, contacte a EFO.
 
   return (
     <div className="cotizador-patch-cords">
-      {/* Header con logo EFO */}
-      <div className="cotizador-header">
-        <div className="logo-section">
-          <img src={logoEFO} alt="EFO" className="efo-logo" />
-          <div className="header-text">
-            <h1>Cotizador de Patch Cords</h1>
-            <p>Configure su patch cord personalizado y obtenga una cotización instantánea</p>
-          </div>
+      <div className="system-header">
+        <img src={logoEFO} alt="EFO" className="efo-logo" />
+        <div className="header-text">
+          <h1>Cotizador de Patch Cords</h1>
+          <p>Configure su patch cord personalizado y obtenga una cotización instantánea</p>
         </div>
       </div>
-
+      
       <div className="cotizador-container">
         {/* Panel de Configuración */}
         <div className="config-panel">
@@ -345,27 +329,6 @@ Para procesar su pedido, contacte a EFO.
           <div className="config-section">
             <h4>Especificaciones del Cable</h4>
             <div className="specs-grid">
-              <div className="spec-field">
-                <label>Línea de Producto</label>
-                <div className="radio-group">
-                  {opciones.lineasProducto.map(opt => (
-                    <label key={opt.value} className="radio-option">
-                      <input 
-                        type="radio"
-                        name="lineaProducto"
-                        value={opt.value}
-                        checked={configuracion.lineaProducto === opt.value}
-                        onChange={(e) => handleConfigChange('lineaProducto', e.target.value)}
-                      />
-                      <span className="radio-label">
-                        <strong>{opt.label}</strong>
-                        <small>{opt.description}</small>
-                      </span>
-                    </label>
-                  ))}
-                </div>
-              </div>
-
               <div className="spec-field">
                 <label>Tipo de Fibra</label>
                 <select 
@@ -444,27 +407,6 @@ Para procesar su pedido, contacte a EFO.
                   </button>
                 </div>
               </div>
-            </div>
-          </div>
-
-          {/* Extras */}
-          <div className="config-section">
-            <h4>Extras Opcionales</h4>
-            <div className="extras-grid">
-              {Object.entries(productDatabase.extras).map(([key, extra]) => (
-                <label key={key} className="extra-checkbox">
-                  <input 
-                    type="checkbox"
-                    checked={configuracion.extras.includes(key)}
-                    onChange={() => toggleExtra(key)}
-                  />
-                  <span className="checkmark"></span>
-                  <div className="extra-info">
-                    <span className="extra-name">{extra.descripcion}</span>
-                    <span className="extra-price">+${extra.costo}</span>
-                  </div>
-                </label>
-              ))}
             </div>
           </div>
         </div>
